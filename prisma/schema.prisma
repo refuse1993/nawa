@@ -1,0 +1,126 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int       @id @default(autoincrement())
+  gender        String?
+  startDate     DateTime?
+  clubId        Int?
+  activityScore Int       @default(0)
+  club          Club?     @relation(fields: [clubId], references: [id], name: "ClubUsers")
+  comments      Comment[]
+  likes         Like[]
+  memberships   Member[]
+  scheduleParticipants ScheduleParticipants[]
+
+  @@map("users")
+}
+
+model Club {
+  id              Int       @id @default(autoincrement())
+  representativeId Int
+  creationDate    DateTime
+  activityScore   Int       @default(0)
+  members         Member[]
+  schedules       Schedule[]
+  matches         Match[]
+  users           User[]    @relation("ClubUsers")
+
+  @@map("clubs")
+}
+
+model Schedule {
+  id                    Int        @id @default(autoincrement())
+  clubId                Int
+  date                  DateTime
+  location              String
+  creatorId             Int
+  club                  Club       @relation(fields: [clubId], references: [id])
+  comments              Comment[]
+  scheduleParticipants  ScheduleParticipants[]
+  matches               Match[]
+
+  @@map("schedules")
+}
+
+model ScheduleParticipants {
+  scheduleId Int
+  userId     Int
+  schedule   Schedule @relation(fields: [scheduleId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+
+  @@id([scheduleId, userId])
+  @@map("schedule_participants")
+}
+
+
+model Comment {
+  id            Int       @id @default(autoincrement())
+  userId        Int
+  content       String
+  user          User      @relation(fields: [userId], references: [id])
+  scheduleId    Int?
+  schedule      Schedule? @relation(fields: [scheduleId], references: [id])
+
+  @@map("comments")
+}
+
+
+model Like {
+  id            Int        @id @default(autoincrement())
+  userId        Int
+  targetId      Int
+  user          User       @relation(fields: [userId], references: [id])
+
+  @@map("likes")
+}
+
+model Match {
+  id            Int        @id @default(autoincrement())
+  clubId        Int
+  scheduleId    Int?
+  date          DateTime
+  location      String
+  youtubeLink   String?
+  club          Club       @relation(fields: [clubId], references: [id])
+  schedule      Schedule?  @relation(fields: [scheduleId], references: [id])
+  teams         Team[]
+
+  @@map("matches")
+}
+
+model Team {
+  id            Int        @id @default(autoincrement())
+  score         Int
+  winStatus     Boolean
+  averageScore  Float
+  members       Member[]
+  matchId  Int
+  match    Match   @relation(fields: [matchId], references: [id])
+  @@map("teams")
+}
+
+model Member {
+  id            Int        @id @default(autoincrement())
+  teamId        Int
+  userId        Int
+  scoreChange   Int
+  team          Team       @relation(fields: [teamId], references: [id])
+  user          User       @relation(fields: [userId], references: [id])
+  clubId        Int
+  club          Club       @relation(fields: [clubId], references: [id])
+
+  @@map("members")
+}
