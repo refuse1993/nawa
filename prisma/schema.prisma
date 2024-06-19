@@ -11,10 +11,11 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id            Int       @id @default(autoincrement())
+  id            String    @id @default(uuid())
   gender        String?
   startDate     DateTime?
   clubId        Int?
@@ -30,6 +31,8 @@ model User {
 
 model Club {
   id              Int       @id @default(autoincrement())
+  name            String
+  logoUrl         String?
   representativeId Int
   creationDate    DateTime
   activityScore   Int       @default(0)
@@ -57,7 +60,7 @@ model Schedule {
 
 model ScheduleParticipants {
   scheduleId Int
-  userId     Int
+  userId     String // UUID 형식의 userId를 참조
   schedule   Schedule @relation(fields: [scheduleId], references: [id])
   user       User     @relation(fields: [userId], references: [id])
 
@@ -65,10 +68,9 @@ model ScheduleParticipants {
   @@map("schedule_participants")
 }
 
-
 model Comment {
   id            Int       @id @default(autoincrement())
-  userId        Int
+  userId        String    // UUID 형식의 userId를 참조
   content       String
   user          User      @relation(fields: [userId], references: [id])
   scheduleId    Int?
@@ -77,10 +79,9 @@ model Comment {
   @@map("comments")
 }
 
-
 model Like {
   id            Int        @id @default(autoincrement())
-  userId        Int
+  userId        String     // UUID 형식의 userId를 참조
   targetId      Int
   user          User       @relation(fields: [userId], references: [id])
 
@@ -115,7 +116,7 @@ model Team {
 model Member {
   id            Int        @id @default(autoincrement())
   teamId        Int
-  userId        Int
+  userId        String     // UUID 형식의 userId를 참조
   scoreChange   Int
   team          Team       @relation(fields: [teamId], references: [id])
   user          User       @relation(fields: [userId], references: [id])

@@ -1,7 +1,11 @@
-<script setup>
-import MainLayout from '~/layouts/MainLayout.vue';
+<template>
+	<div>
+		<p>Redirecting...</p>
+	</div>
+</template>
 
-const client = useSupabaseClient();
+<script setup>
+const supabase = useSupabaseClient();
 const user = useSupabaseUser();
 const router = useRouter();
 
@@ -15,26 +19,21 @@ const checkUserExists = async (userId) => {
 		return false;
 	}
 };
-
 watchEffect(async () => {
 	if (user.value) {
 		console.log('User is logged in:', user.value);
 		const userExists = await checkUserExists(user.value.id);
-		if (!userExists) {
-			router.push('/signup');
+		if (userExists) {
+			router.push('/club/clubindex');
+		} else {
+			router.push('/auth');
 		}
 	} else {
-		console.log('No user is logged in');
+		router.push('/auth');
 	}
 });
 </script>
 
-<template>
-	<MainLayout>
-		<div>
-			<h1>Welcome to the Club Page</h1>
-			<!-- 여기에 추가적인 클럽 페이지 콘텐츠를 추가하세요 -->
-			<div>{{ user.id }}</div>
-		</div>
-	</MainLayout>
-</template>
+<style scoped>
+/* 스타일을 여기에 추가하세요 */
+</style>

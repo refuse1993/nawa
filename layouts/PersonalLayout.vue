@@ -5,7 +5,6 @@
 				<img class="w-[35px]" src="https://placehold.co/300" />
 			</div>
 		</div>
-		<Headernav />
 
 		<div class="flex w-full max-w-[500px] mx-auto h-screen">
 			<!-- <slot /> -->
@@ -17,7 +16,6 @@
 </template>
 
 <script setup>
-import Headernav from '@/components/nav/HeaderNav.vue';
 import Bottomnav from '@/components/nav/BottomNav.vue';
 import { useNavigationStore } from '~/stores/navigation';
 const navigationStore = useNavigationStore();

@@ -1,43 +1,93 @@
 <template>
-    <div class="tabs" id="HeaderNav">
-        <div class="item" :class="{ 'item--checked': tab === 'club' }" @click="tab = 'club'">
-            <div class="text">클럽</div>
-            <div class="checked" v-if="tab === 'club'"></div>
-        </div>
-        <div class="item" :class="{ 'item--checked': tab === 'schedule' }" @click="tab = 'schedule'">
-            <div class="text">클럽 일정</div>
-        </div>
-        <div class="item" :class="{ 'item--checked': tab === 'record' }" @click="tab = 'record'">
-            <div class="text">클럽 전적</div>
-        </div>
-        <div class="item" :class="{ 'item--checked': tab === 'unknown' }" @click="tab = 'unknown'">
-            <div class="text">???</div>
-        </div>
-    </div>
+	<div class="flex justify-between items-center bg-white shadow px-4 overflow-hidden">
+		<div
+			class="flex-grow flex flex-col justify-center items-center cursor-pointer p-2"
+			:class="{ 'bg-opacity-10': activeTab === 'club' }"
+			@click="setActiveTab('club')"
+		>
+			<div
+				class="text-sm"
+				:class="{ 'text-black font-semibold': activeTab === 'club', 'text-gray-500': activeTab !== 'club' }"
+			>
+				클럽
+			</div>
+			<div v-if="activeTab === 'club'" class="w-full h-1 bg-black rounded-full bottom-0"></div>
+		</div>
+		<div
+			class="flex-grow flex flex-col justify-center items-center cursor-pointer p-2"
+			:class="{ 'bg-opacity-10': activeTab === 'schedule' }"
+			@click="setActiveTab('schedule')"
+		>
+			<div
+				class="text-sm"
+				:class="{
+					'text-black font-semibold': activeTab === 'schedule',
+					'text-gray-500': activeTab !== 'schedule',
+				}"
+			>
+				클럽 일정
+			</div>
+			<div v-if="activeTab === 'schedule'" class="w-full h-1 bg-black rounded-full bottom-0"></div>
+		</div>
+		<div
+			class="flex-grow flex flex-col justify-center items-center cursor-pointer p-2"
+			:class="{ 'bg-opacity-10': activeTab === 'records' }"
+			@click="setActiveTab('records')"
+		>
+			<div
+				class="text-sm"
+				:class="{
+					'text-black font-semibold': activeTab === 'records',
+					'text-gray-500': activeTab !== 'records',
+				}"
+			>
+				클럽 전적
+			</div>
+			<div v-if="activeTab === 'records'" class="w-full h-1 bg-black rounded-full bottom-0"></div>
+		</div>
+		<div
+			class="flex-grow flex flex-col justify-center items-center cursor-pointer p-2"
+			:class="{ 'bg-opacity-10': activeTab === 'other' }"
+			@click="setActiveTab('other')"
+		>
+			<div
+				class="text-sm"
+				:class="{
+					'text-black font-semibold': activeTab === 'other',
+					'text-gray-500': activeTab !== 'other',
+				}"
+			>
+				클럽 멤버
+			</div>
+			<div v-if="activeTab === 'other'" class="w-full h-1 bg-black rounded-full bottom-0"></div>
+		</div>
+	</div>
 </template>
 
 <script setup>
-import { ref } from "vue";
-const tab = ref("club");
-</script>
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { useNavigationStore } from '~/stores/navigation';
 
-<style scoped>
-.tabs {
-    @apply w-88 h-10 shadow-md flex justify-start items-center gap-4 px-4 overflow-hidden bg-white;
+const router = useRouter();
+const navigationStore = useNavigationStore();
+const activeTab = computed(() => navigationStore.activeTab);
+
+function setActiveTab(tab) {
+	navigationStore.setActiveTab(tab);
+	switch (tab) {
+		case 'club':
+			router.push('/club/clubindex');
+			break;
+		case 'schedule':
+			router.push('/club/schedule');
+			break;
+		case 'records':
+			router.push('/club/matches');
+			break;
+		case 'other':
+			router.push('/club/members'); // 다른 페이지를 만들지 않으셨다면 이 부분은 필요없습니다.
+			break;
+	}
 }
-.item {
-    @apply flex-grow h-10 flex flex-col justify-center items-center overflow-hidden;
-}
-.text {
-    @apply flex-shrink-0 self-stretch h-5 overflow-hidden whitespace-nowrap overflow-ellipsis font-sans text-base leading-5;
-}
-.checked {
-    @apply absolute w-11 h-1 rounded-full bg-blue-600;
-}
-.item--checked .text {
-    @apply text-gray-800 font-semibold;
-}
-.item:not(.item--checked) .text {
-    @apply text-gray-600 font-normal;
-}
-</style>
+</script>
