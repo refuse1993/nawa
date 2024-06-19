@@ -30,12 +30,13 @@ const userStore = useUserStore();
 const client = useSupabaseClient();
 const user = useSupabaseUser();
 
-const logout = () => {
-	client.auth.signOut();
-	userStore.isLogoutOverlay = false;
-	return navigateTo('/auth');
+const logout = async () => {
+	await client.auth.signOut();
+	nextTick(() => {
+		userStore.isLogoutOverlay = false;
+		return navigateTo('/auth');
+	});
 };
-
 const deleteAccount = async () => {
 	if (!user.value) {
 		console.error('No user is logged in');

@@ -9,6 +9,9 @@ export default defineNuxtConfig({
 			databaseUrl: process.env.DATABASE_URL,
 		},
 	},
+	router: {
+		middleware: ['auth'],
+	},
 	supabase: {
 		redirect: false,
 	},
