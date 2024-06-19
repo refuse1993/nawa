@@ -32,7 +32,7 @@ watchEffect(async () => {
 
 <template>
 	<MainLayout>
-		<div class="flex flex-col items-center justify-center min-h-[20vh] bg-gray-100">
+		<div class="flex flex-col items-center justify-center min-h-[20vh]">
 			<!-- 클럽 정보를 표시하는 컴포넌트를 추가 -->
 			<UserClubInfo />
 		</div>

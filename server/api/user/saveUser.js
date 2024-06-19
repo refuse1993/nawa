@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
 
 	const body = await readBody(event);
 
-	const { id, startDate, clubId, gender } = body;
+	const { id, startDate, clubId, gender, nickname } = body;
 
 	if (!id) {
 		event.res.statusCode = 400;
@@ -24,6 +24,7 @@ export default defineEventHandler(async (event) => {
 				startDate: startDate ? new Date(startDate) : null,
 				clubId: clubId ? parseInt(clubId) : null,
 				gender: gender || null, // 성별 필드 추가
+				nickname: nickname || null, // 닉네임 필드 추가
 			},
 			create: {
 				id: id,
@@ -31,6 +32,7 @@ export default defineEventHandler(async (event) => {
 				startDate: startDate ? new Date(startDate) : null,
 				clubId: clubId ? parseInt(clubId) : null,
 				activityScore: 0,
+				nickname: nickname || null, // 닉네임 필드 추가
 			},
 		});
 

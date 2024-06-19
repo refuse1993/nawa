@@ -17,6 +17,7 @@ datasource db {
 model User {
   id            String    @id @default(uuid())
   gender        String?
+  nickname        String?
   startDate     DateTime?
   clubId        Int?
   activityScore Int       @default(0)

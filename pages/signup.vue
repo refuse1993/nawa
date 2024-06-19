@@ -1,44 +1,74 @@
 <template>
-	<div id="SignupPage" class="w-full h-[100vh] h-screen pt-32 flex flex-col items-center justify-center">
-		<div class="w-full max-w-[350px] mx-auto px-2 text-black">
-			<div class="text-center mb-6 mt-4">Sign Up</div>
+	<div id="SignupPage" class="w-full h-screen flex flex-col items-center justify-center bg-gray-100">
+		<div class="w-full max-w-sm mx-auto bg-white p-6 rounded-lg shadow-md text-gray-800">
+			<h2 class="text-center text-2xl font-semibold mb-6">Sign Up</h2>
 
-			<div class="flex flex-col items-center">
-				<img :src="userImage" alt="User Image" class="w-24 h-24 rounded-full mb-4 object-cover" />
-				<div class="text-gray-700 mb-4">{{ form.id }}</div>
+			<div class="flex items-center justify-center mb-6">
+				<div v-if="user" class="flex items-center text-gray-800">
+					<img
+						class="rounded-full h-12 w-12 object-cover"
+						:src="user.identities[0].identity_data.avatar_url"
+					/>
+					<div class="ml-3 font-semibold text-lg">
+						{{ user.identities[0].identity_data.full_name }}
+					</div>
+				</div>
 			</div>
 
-			<form @submit.prevent="submitForm" class="flex flex-col gap-4">
+			<form @submit.prevent="submitForm" class="space-y-4">
+				<div v-if="user">
+					<label for="nickname" class="block text-sm font-medium text-gray-700">Nickname</label>
+					<input
+						v-model="form.nickname"
+						id="nickname"
+						type="text"
+						:placeholder="user.identities[0].identity_data.full_name"
+						class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+					/>
+				</div>
 				<div>
-					<label for="gender" class="block text-gray-700">Gender</label>
-					<select v-model="form.gender" id="gender" class="w-full border rounded px-2 py-1">
+					<label for="gender" class="block text-sm font-medium text-gray-700">Gender</label>
+					<select
+						v-model="form.gender"
+						id="gender"
+						class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+					>
 						<option value="">Select gender</option>
 						<option value="남성">남성</option>
 						<option value="여성">여성</option>
 					</select>
 				</div>
 				<div>
-					<label for="startDate" class="block text-gray-700">Start Date</label>
+					<label for="startDate" class="block text-sm font-medium text-gray-700">Start Date</label>
 					<input
 						v-model="form.startDate"
 						id="startDate"
 						type="date"
-						class="w-full border rounded px-2 py-1"
+						class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
 					/>
 				</div>
 				<div>
-					<label for="clubId" class="block text-gray-700">Club</label>
-					<select v-model="form.clubId" id="clubId" class="w-full border rounded px-2 py-1">
+					<label for="clubId" class="block text-sm font-medium text-gray-700">Club</label>
+					<select
+						v-model="form.clubId"
+						id="clubId"
+						class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+					>
 						<option value="">Select a club</option>
 						<option v-for="club in clubs" :key="club.id" :value="club.id">
 							{{ club.name }}
 						</option>
 					</select>
-					<div v-if="selectedClub">
-						<img :src="selectedClub.logoUrl" alt="Club Logo" class="w-16 h-16 rounded-full mt-4 mx-auto" />
+					<div v-if="selectedClub" class="flex justify-center mt-4">
+						<img :src="selectedClub.logoUrl" alt="Club Logo" class="w-16 h-16 rounded-full" />
 					</div>
 				</div>
-				<button type="submit" class="w-full bg-blue-500 text-white rounded py-2">Submit</button>
+				<button
+					type="submit"
+					class="w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+				>
+					Submit
+				</button>
 			</form>
 		</div>
 	</div>
@@ -53,7 +83,8 @@ const form = ref({
 	id: '',
 	startDate: '',
 	clubId: '',
-	gender: '', // 성별 필드 추가
+	gender: '',
+	nickname: '', // 닉네임 필드 추가
 });
 const userImage = ref('/github-logo.png');
 const clubs = ref([]);
@@ -101,8 +132,6 @@ watchEffect(async () => {
 		if (userExists) {
 			router.push('/club/clubindex');
 		}
-	} else {
-		console.log('No user is logged in');
 	}
 });
 
@@ -111,14 +140,7 @@ onMounted(async () => {
 
 	if (user.value) {
 		form.value.id = user.value.id;
-
-		const { data, error } = await client.from('profiles').select('avatar_url').eq('id', user.value.id).single();
-
-		if (error) {
-			console.error(error);
-		} else {
-			userImage.value = data.avatar_url || '/github-logo.png';
-		}
+		form.value.nickname = user.identities[0].identity_data.full_name; // 기본 닉네임 설정
 
 		const userExists = await checkUserExists(user.value.id);
 		if (userExists) {
@@ -141,7 +163,8 @@ const submitForm = async () => {
 				id: form.value.id,
 				startDate: form.value.startDate,
 				clubId: form.value.clubId,
-				gender: form.value.gender, // 성별 필드 추가
+				gender: form.value.gender,
+				nickname: form.value.nickname, // 닉네임 필드 추가
 			}),
 		});
 		const data = await response.json();
@@ -158,5 +181,18 @@ const submitForm = async () => {
 </script>
 
 <style scoped>
-/* 스타일을 여기에 추가하세요 */
+.loader {
+	border-color: #3490dc;
+	border-top-color: transparent;
+	animation: spinner 1s linear infinite;
+}
+
+@keyframes spinner {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
 </style>
