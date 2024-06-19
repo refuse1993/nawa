@@ -2,8 +2,8 @@
 	<div id="MainLayout" class="h-screen flex flex-col">
 		<!-- 고정된 헤더 -->
 		<div class="w-full mx-auto fixed top-0 left-0 right-0 bg-white z-10">
-			<div id="TopMenu" class="w-full flex items-center justify-center px-2 h-10 my-2">
-				<img class="w-[35px]" src="https://placehold.co/300" />
+			<div id="TopMenu" class="w-full flex items-center justify-center px-2 h-8 my-2">
+				<h1 class="italic text-xl font-semibold">Nawa !!</h1>
 			</div>
 			<Headernav />
 		</div>
