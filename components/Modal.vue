@@ -8,12 +8,16 @@
 				@click="userStore.isLogoutOverlay = false"
 				class="flex items-center justify-between bg-black w-full p-3"
 			>
-				<div>Close Modal</div>
+				<div>Close</div>
 				<Icon name="mdi:close" size="25" />
 			</button>
 			<div class="border-b border-b-gray-700 my-1" />
 			<button @click="logout()" class="flex items-center justify-between bg-black w-full p-3">
 				<div>Log Out</div>
+				<Icon name="ph:sign-out" size="25" />
+			</button>
+			<button @click="deleteAccount()" class="flex items-center justify-between bg-black w-full p-3">
+				<div>회원탈퇴</div>
 				<Icon name="ph:sign-out" size="25" />
 			</button>
 		</div>
@@ -24,10 +28,45 @@
 import { useUserStore } from '~/stores/user';
 const userStore = useUserStore();
 const client = useSupabaseClient();
+const user = useSupabaseUser();
 
 const logout = () => {
 	client.auth.signOut();
 	userStore.isLogoutOverlay = false;
 	return navigateTo('/auth');
+};
+
+const deleteAccount = async () => {
+	if (!user.value) {
+		console.error('No user is logged in');
+		return;
+	}
+
+	const confirmation = confirm('Are you sure you want to delete your account? This action cannot be undone.');
+	if (!confirmation) {
+		return;
+	}
+
+	try {
+		const response = await fetch('/api/user/deleteUser', {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ userId: user.value.id }),
+		});
+
+		if (response.ok) {
+			console.log('User deleted successfully');
+			await client.auth.signOut();
+			userStore.isLogoutOverlay = false;
+			router.push('/signup');
+		} else {
+			const data = await response.json();
+			console.error('Error deleting user:', data.error);
+		}
+	} catch (error) {
+		console.error('An error occurred:', error);
+	}
 };
 </script>

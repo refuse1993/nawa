@@ -10,6 +10,14 @@
 
 			<form @submit.prevent="submitForm" class="flex flex-col gap-4">
 				<div>
+					<label for="gender" class="block text-gray-700">Gender</label>
+					<select v-model="form.gender" id="gender" class="w-full border rounded px-2 py-1">
+						<option value="">Select gender</option>
+						<option value="남성">남성</option>
+						<option value="여성">여성</option>
+					</select>
+				</div>
+				<div>
 					<label for="startDate" class="block text-gray-700">Start Date</label>
 					<input
 						v-model="form.startDate"
@@ -45,6 +53,7 @@ const form = ref({
 	id: '',
 	startDate: '',
 	clubId: '',
+	gender: '', // 성별 필드 추가
 });
 const userImage = ref('/github-logo.png');
 const clubs = ref([]);
@@ -132,6 +141,7 @@ const submitForm = async () => {
 				id: form.value.id,
 				startDate: form.value.startDate,
 				clubId: form.value.clubId,
+				gender: form.value.gender, // 성별 필드 추가
 			}),
 		});
 		const data = await response.json();

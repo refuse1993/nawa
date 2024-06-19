@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
 
 	const body = await readBody(event);
 
-	const { id, startDate, clubId } = body;
+	const { id, startDate, clubId, gender } = body;
 
 	if (!id) {
 		event.res.statusCode = 400;
@@ -23,9 +23,11 @@ export default defineEventHandler(async (event) => {
 			update: {
 				startDate: startDate ? new Date(startDate) : null,
 				clubId: clubId ? parseInt(clubId) : null,
+				gender: gender || null, // 성별 필드 추가
 			},
 			create: {
 				id: id,
+				gender: gender || null, // 성별 필드 추가
 				startDate: startDate ? new Date(startDate) : null,
 				clubId: clubId ? parseInt(clubId) : null,
 				activityScore: 0,

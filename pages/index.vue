@@ -1,6 +1,8 @@
 <template>
-	<div>
-		<p>Redirecting...</p>
+	<div class="flex items-center justify-center min-h-screen bg-white bg-opacity-50">
+		<div class="flex flex-col items-center">
+			<div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
+		</div>
 	</div>
 </template>
 
@@ -19,6 +21,7 @@ const checkUserExists = async (userId) => {
 		return false;
 	}
 };
+
 watchEffect(async () => {
 	if (user.value) {
 		console.log('User is logged in:', user.value);
@@ -35,5 +38,18 @@ watchEffect(async () => {
 </script>
 
 <style scoped>
-/* 스타일을 여기에 추가하세요 */
+.loader {
+	border-color: #3490dc;
+	border-top-color: transparent;
+	animation: spinner 1s linear infinite;
+}
+
+@keyframes spinner {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
 </style>

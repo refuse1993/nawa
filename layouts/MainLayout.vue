@@ -1,18 +1,23 @@
 <template>
-	<div id="MainLayout" class="h-screen">
-		<div class="w-full max-w[500px] mx-auto">
+	<div id="MainLayout" class="h-screen flex flex-col">
+		<!-- 고정된 헤더 -->
+		<div class="w-full mx-auto fixed top-0 left-0 right-0 bg-white z-10">
 			<div id="TopMenu" class="w-full flex items-center justify-center px-2 h-10 my-2">
 				<img class="w-[35px]" src="https://placehold.co/300" />
 			</div>
+			<Headernav />
 		</div>
-		<Headernav />
 
-		<div class="flex w-full max-w-[500px] mx-auto h-screen">
-			<!-- <slot /> -->
+		<!-- 페이지 콘텐츠 -->
+		<div class="flex-1 w-full max-w-[500px] mx-auto mt-[100px] mb-[60px]">
+			<!-- 헤더와 하단 내비게이션 높이만큼 마진 추가 -->
 			<slot />
 		</div>
 
-		<Bottomnav />
+		<!-- 고정된 하단 내비게이션 -->
+		<div class="w-full mx-auto fixed bottom-0 left-0 right-0 bg-white z-10">
+			<Bottomnav />
+		</div>
 	</div>
 </template>
 

@@ -1,5 +1,6 @@
 <script setup>
 import MainLayout from '~/layouts/MainLayout.vue';
+import UserClubInfo from '~/components/club/UserClubInfo.vue';
 
 const client = useSupabaseClient();
 const user = useSupabaseUser();
@@ -31,10 +32,9 @@ watchEffect(async () => {
 
 <template>
 	<MainLayout>
-		<div>
-			<h1>Welcome to the Club Page</h1>
-			<!-- 여기에 추가적인 클럽 페이지 콘텐츠를 추가하세요 -->
-			<div>{{ user.id }}</div>
+		<div class="flex flex-col items-center justify-center min-h-[20vh] bg-gray-100">
+			<!-- 클럽 정보를 표시하는 컴포넌트를 추가 -->
+			<UserClubInfo />
 		</div>
 	</MainLayout>
 </template>
