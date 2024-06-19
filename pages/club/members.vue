@@ -1,9 +1,16 @@
-<script setup>
-import MainLayout from '~/layouts/MainLayout.vue';
-</script>
-
 <template>
 	<MainLayout>
-		<div>members</div>
+		<div class="min-h-screen bg-gray-100 p-4">
+			<ClubMembers />
+		</div>
 	</MainLayout>
 </template>
+
+<script setup>
+import MainLayout from '~/layouts/MainLayout.vue';
+import ClubMembers from '~/components/club/ClubMembers.vue';
+</script>
+
+<style scoped>
+/* 추가 스타일 */
+</style>

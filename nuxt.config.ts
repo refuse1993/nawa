@@ -2,18 +2,6 @@
 export default defineNuxtConfig({
 	pages: true,
 	modules: ['nuxt-icon', '@nuxtjs/tailwindcss', '@nuxtjs/supabase', '@pinia/nuxt', '@vite-pwa/nuxt'],
-
-	nitro: {
-		preset: 'node-server',
-	},
-	serverHandlers: [
-		{
-			route: '/api/**',
-			handler: '~/middleware/cors.ts',
-			method: 'all',
-		},
-	],
-
 	runtimeConfig: {
 		public: {
 			bucketUrl: process.env.BUCKET_URL,
