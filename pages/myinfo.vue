@@ -7,10 +7,15 @@ const userStore = useUserStore();
 <template>
 	<PersonalLayout>
 		<div>MY Info</div>
-		<button @click="userStore.isLogoutOverlay = true" class="w-20 h-5">
-			<Icon class="mb-1" name="material-symbols:person" size="19" color="#ffffff"></Icon>
-			<div class="leading-3 text-xs text-gray-900">로그아웃</div>
-		</button>
+		<div class="absolute bottom-14 right-4 flex items-center bg-gradient-to-r">
+			<button
+				@click="userStore.isLogoutOverlay = true"
+				class="flex items-center bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-2 px-4 rounded-lg shadow-md hover:from-blue-600 hover:to-indigo-700 transition-all duration-300"
+			>
+				<Icon class="mr-2" name="material-symbols:person" size="19" color="#ffffff"></Icon>
+				<span class="text-sm font-semibold">로그아웃</span>
+			</button>
+		</div>
 		<Modal
 			:class="[
 				{
