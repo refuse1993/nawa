@@ -11,7 +11,6 @@ const supabase = useSupabaseClient();
 const user = useSupabaseUser();
 
 const checkUserExists = async (userId) => {
-    // commit test
     try {
         const response = await fetch(`/api/user/checkUser?userId=${userId}`);
         if (!response.ok) {
