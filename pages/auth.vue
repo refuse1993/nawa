@@ -7,7 +7,7 @@
         <div class="max-w-[350px] mx-auto px-2 text-black flex flex-col items-center justify-center h-[50vh]">
             <div class="text-center mb-6 mt-4">Login / Register</div>
 
-            <button @click="log">{{ msg }} class="w-full max-w-[300px] flex items-center justify-center">
+            <button click="log">{{ msg }} class="w-full max-w-[300px] flex items-center justify-center">
                 <img class="w-full rounded-full" src="/kakao_login_medium_wide.png" />
             </button>
         </div>
