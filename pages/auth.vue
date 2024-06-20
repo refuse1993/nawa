@@ -7,7 +7,7 @@
         <div class="max-w-[350px] mx-auto px-2 text-black flex flex-col items-center justify-center h-[50vh]">
             <div class="text-center mb-6 mt-4">Login / Register</div>
 
-            <button @click="loginkakao" class="w-full max-w-[300px] flex items-center justify-center">
+            <button @click="login('kakao')" class="w-full max-w-[300px] flex items-center justify-center">
                 <img class="w-full rounded-full" src="/kakao_login_medium_wide.png" />
             </button>
         </div>
@@ -15,45 +15,46 @@
 </template>
 
 <script setup>
-    const supabase = useSupabaseClient();
-    const user = useSupabaseUser();
-    const router = useRouter();
+const supabase = useSupabaseClient();
+const user = useSupabaseUser();
+const router = useRouter();
 
-    const checkUserExists = async (userId) => {
-        try {
-            const response = await fetch(`/api/user/checkUser?userId=${userId}`);
-            const data = await response.json();
-            return data.exists;
-        } catch (error) {
-            console.error("Error checking user:", error);
-            return false;
-        }
-    };
+const checkUserExists = async (userId) => {
+    try {
+        const response = await fetch(`/api/user/checkUser?userId=${userId}`);
+        const data = await response.json();
+        return data.exists;
+    } catch (error) {
+        console.error("Error checking user:", error);
+        return false;
+    }
+};
 
-    watchEffect(async () => {
-        if (user.value) {
-            console.log("User is logged in:", user.value);
-            const userExists = await checkUserExists(user.value.id);
-            if (userExists) {
-                router.push("/club/clubindex");
-            } else {
-                router.push("/signup");
-            }
+watchEffect(async () => {
+    if (user.value) {
+        console.log("User is logged in:", user.value);
+        const userExists = await checkUserExists(user.value.id);
+        if (userExists) {
+            router.push("/club/clubindex");
         } else {
-            console.log("No user is logged in");
+            router.push("/signup");
         }
+    } else {
+        console.log("No user is logged in");
+    }
+});
+
+const login = async (prov) => {
+    console.log("Login provider:", prov);
+    const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: prov,
+        options: {
+            redirectTo: "/signup",
+        },
     });
 
-    const loginkakao = async () => {
-        //console.log("Login provider:", prov);
-        const { data, error } = await supabase.auth.signInWithOAuth({
-            options: {
-                redirectTo: "/signup",
-            },
-        });
-
-        if (error) console.log(error);
-    };
+    if (error) console.log(error);
+};
 </script>
 
 <style scoped>
