@@ -15,45 +15,45 @@
 </template>
 
 <script setup>
-const supabase = useSupabaseClient();
-const user = useSupabaseUser();
-const router = useRouter();
+    const supabase = useSupabaseClient();
+    const user = useSupabaseUser();
+    const router = useRouter();
 
-const checkUserExists = async (userId) => {
-    try {
-        const response = await fetch(`/api/user/checkUser?userId=${userId}`);
-        const data = await response.json();
-        return data.exists;
-    } catch (error) {
-        console.error("Error checking user:", error);
-        return false;
-    }
-};
-
-watchEffect(async () => {
-    if (user.value) {
-        console.log("User is logged in:", user.value);
-        const userExists = await checkUserExists(user.value.id);
-        if (userExists) {
-            router.push("/club/clubindex");
-        } else {
-            router.push("/signup");
+    const checkUserExists = async (userId) => {
+        try {
+            const response = await fetch(`/api/user/checkUser?userId=${userId}`);
+            const data = await response.json();
+            return data.exists;
+        } catch (error) {
+            console.error("Error checking user:", error);
+            return false;
         }
-    } else {
-        console.log("No user is logged in");
-    }
-});
+    };
 
-const loginkakao = async () => {
-     //console.log("Login provider:", prov);
-    const { data, error } = await supabase.auth.signInWithOAuth({
-        options: {
-            redirectTo: "/signup",
-        },
+    watchEffect(async () => {
+        if (user.value) {
+            console.log("User is logged in:", user.value);
+            const userExists = await checkUserExists(user.value.id);
+            if (userExists) {
+                router.push("/club/clubindex");
+            } else {
+                router.push("/signup");
+            }
+        } else {
+            console.log("No user is logged in");
+        }
     });
 
-    if (error) console.log(error);
-};
+    const loginkakao = async () => {
+        //console.log("Login provider:", prov);
+        const { data, error } = await supabase.auth.signInWithOAuth({
+            options: {
+                redirectTo: "/signup",
+            },
+        });
+
+        if (error) console.log(error);
+    };
 </script>
 
 <style scoped>
