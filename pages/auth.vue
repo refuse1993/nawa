@@ -58,7 +58,5 @@ const login = async (prov) => {
 </script>
 
 <style scoped>
-button {
-  cursor: pointer;
-}
+/* 스타일을 여기에 추가하세요 */
 </style>
