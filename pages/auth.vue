@@ -44,7 +44,7 @@ watchEffect(async () => {
     }
 });
 
-const login = async (prov) => {
+async login(prov) => {
     console.log("Login provider:", prov);
     const { data, error } = await supabase.auth.signInWithOAuth({
         provider: prov,
