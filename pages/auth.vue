@@ -14,6 +14,9 @@
     </div>
 </template>
 
+// kakao login test
+<script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+
 <script setup>
 const supabase = useSupabaseClient();
 const user = useSupabaseUser();
