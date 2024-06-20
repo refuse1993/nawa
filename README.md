@@ -1,3 +1,31 @@
+# 로컬 실행 시
+
+```bash
+# npm
+npm install
+
+npx prisma generate
+
+#외부 접속 가능하게
+npx nuxt dev --host 0.0.0.0 --port 3000
+
+// api에 있는 js 파일들 prisma import를 @prisma/client로해야함
+```
+
+# 빌드 배포 실행 시
+
+```bash
+# npm
+npm install
+
+npx prisma generate
+
+npm run generate
+npx serve .output/public
+
+// api에 있는 js 파일들 prisma를 .prisma/client로해야함
+```
+
 # Nuxt 3 Minimal Starter
 
 Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
