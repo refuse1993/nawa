@@ -18,6 +18,7 @@
 const supabase = useSupabaseClient();
 const user = useSupabaseUser();
 const router = useRouter();
+const isLoading = ref(true);
 
 const checkUserExists = async (userId) => {
     try {
@@ -30,6 +31,22 @@ const checkUserExists = async (userId) => {
     }
 };
 
+// Auth 상태 변화를 감지하고 처리
+supabase.auth.onAuthStateChange(async (event, session) => {
+    if (session) {
+        const userExists = await checkUserExists(session.user.id);
+        if (userExists) {
+            router.push("/club/clubindex");
+        } else {
+            router.push("/signup");
+        }
+    } else {
+        console.log("No user is logged in");
+    }
+    isLoading.value = false;
+});
+
+// 페이지 로드 시 로그인 상태 확인
 watchEffect(async () => {
     if (user.value) {
         console.log("User is logged in:", user.value);
@@ -42,6 +59,7 @@ watchEffect(async () => {
     } else {
         console.log("No user is logged in");
     }
+    isLoading.value = false;
 });
 
 const login = async (prov) => {
@@ -49,7 +67,7 @@ const login = async (prov) => {
     const { data, error } = await supabase.auth.signInWithOAuth({
         provider: prov,
         options: {
-            redirectTo: "/signup",
+            redirectTo: window.location.origin + "/auth",
         },
     });
 
