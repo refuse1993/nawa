@@ -10,16 +10,14 @@
 			<div v-for="blank in blanks" :key="blank" class="text-gray-300">-</div>
 			<div v-for="date in dates" :key="date" class="relative">
 				<span
-					:class="{ 'bg-blue-500 text-white': hasEvents(date) }"
+					:class="{
+						'bg-green-500 text-white': hasScheduleOnDate(date),
+						'bg-blue-500 text-white': isParticipatingOnDate(date),
+					}"
 					class="inline-block w-8 h-8 leading-8 rounded-full cursor-pointer"
 				>
 					{{ date }}
 				</span>
-				<div v-if="hasEvents(date)" class="absolute top-full left-0 right-0 mt-1 p-1 bg-blue-200 rounded-md">
-					<div v-for="event in getEvents(date)" :key="event.id" class="text-xs text-blue-800">
-						{{ event.location }}
-					</div>
-				</div>
 			</div>
 		</div>
 	</div>
@@ -27,7 +25,15 @@
 
 <script setup>
 const props = defineProps({
-	events: {
+	schedules: {
+		type: Array,
+		required: true,
+	},
+	userId: {
+		type: String,
+		required: true,
+	},
+	participants: {
 		type: Array,
 		required: true,
 	},
@@ -45,22 +51,31 @@ const daysInMonth = computed(() => new Date(currentYear.value, currentMonth.valu
 const blanks = computed(() => Array(startOfMonth.value).fill(''));
 const dates = computed(() => Array.from({ length: daysInMonth.value }, (_, i) => i + 1));
 
-const hasEvents = (date) => {
-	return props.events.some(
-		(event) =>
-			new Date(event.date).getFullYear() === currentYear.value &&
-			new Date(event.date).getMonth() === currentMonth.value &&
-			new Date(event.date).getDate() === date
-	);
+const hasScheduleOnDate = (date) => {
+	const checkDate = new Date(currentYear.value, currentMonth.value, date);
+	return props.schedules.some((schedule) => {
+		const scheduleDate = new Date(schedule.date);
+		return (
+			scheduleDate.getFullYear() === checkDate.getFullYear() &&
+			scheduleDate.getMonth() === checkDate.getMonth() &&
+			scheduleDate.getDate() === checkDate.getDate()
+		);
+	});
 };
 
-const getEvents = (date) => {
-	return props.events.filter(
-		(event) =>
-			new Date(event.date).getFullYear() === currentYear.value &&
-			new Date(event.date).getMonth() === currentMonth.value &&
-			new Date(event.date).getDate() === date
-	);
+const isParticipatingOnDate = (date) => {
+	const checkDate = new Date(currentYear.value, currentMonth.value, date);
+	return props.schedules.some((schedule) => {
+		const scheduleDate = new Date(schedule.date);
+		return (
+			scheduleDate.getFullYear() === checkDate.getFullYear() &&
+			scheduleDate.getMonth() === checkDate.getMonth() &&
+			scheduleDate.getDate() === checkDate.getDate() &&
+			props.participants.some(
+				(participant) => participant.scheduleId === schedule.id && participant.userId === props.userId
+			)
+		);
+	});
 };
 
 const prevMonth = () => {
@@ -74,11 +89,20 @@ const nextMonth = () => {
 
 <style scoped>
 .calendar {
-	max-width: 700px;
+	max-width: 500px;
 	margin: 0 auto;
 	background: #fff;
 	padding: 1rem;
 	border-radius: 0.5rem;
 	box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}
+.bg-blue-500 {
+	background-color: #3b82f6 !important;
+}
+.bg-green-500 {
+	background-color: #10b981 !important;
+}
+.text-white {
+	color: #ffffff !important;
 }
 </style>

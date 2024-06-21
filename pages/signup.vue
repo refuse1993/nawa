@@ -86,7 +86,7 @@ const form = ref({
 	gender: '',
 	nickname: '', // 닉네임 필드 추가
 });
-const userImage = ref('/github-logo.png');
+
 const clubs = ref([]);
 
 const fetchClubs = async () => {
