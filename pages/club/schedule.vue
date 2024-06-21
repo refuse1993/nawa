@@ -11,21 +11,31 @@
 			<div class="mt-8" v-if="user">
 				<h2 class="text-xl font-semibold mb-4">Schedules</h2>
 				<div v-for="schedule in schedules" :key="schedule.id" class="bg-white p-4 rounded-lg shadow-md mb-4">
-					<h3 class="text-lg font-semibold">
-						{{ new Date(schedule.date).toLocaleDateString() }} - {{ schedule.location }}
-					</h3>
-					<p>{{ schedule.description }}</p>
-					<div>
-						<button
-							@click="toggleParticipation(schedule.id)"
-							class="text-sm text-blue-600 hover:text-blue-800"
-						>
-							{{ isParticipating(schedule.id) ? '참석 취소' : '참석' }}
-						</button>
+					<div class="flex justify-between items-center mb-2">
+						<div>
+							<h3 class="text-base font-semibold">
+								{{ new Date(schedule.date).toLocaleDateString() }} - {{ schedule.location }}
+							</h3>
+							<p class="text-sm text-gray-600">{{ schedule.description }}</p>
+						</div>
+						<div class="flex space-x-2">
+							<button
+								@click="toggleParticipation(schedule.id)"
+								class="text-xs text-blue-600 hover:underline"
+							>
+								{{ isParticipating(schedule.id) ? '참석 취소' : '참석' }}
+							</button>
+							<router-link
+								:to="{ name: 'match-registration', params: { scheduleId: schedule.id } }"
+								class="text-xs text-blue-600 hover:underline"
+							>
+								경기 등록
+							</router-link>
+						</div>
 					</div>
 					<div>
-						<strong>참석자:</strong>
-						<ul>
+						<strong class="text-sm">참석자:</strong>
+						<ul class="list-disc list-inside text-sm text-gray-700">
 							<li v-for="participant in getParticipants(schedule.id)" :key="participant.id">
 								{{ participant.nickname || participant.name }}
 							</li>
