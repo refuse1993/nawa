@@ -44,3 +44,24 @@ const userStore = useUserStore();
 		</div>
 	</PersonalLayout>
 </template>
+
+<script setup>
+import PersonalLayout from '~/layouts/PersonalLayout.vue';
+import { useUserStore } from '~/stores/user';
+
+const userStore = useUserStore();
+
+const tennisDays = (startDate) => {
+  const start = new Date(startDate);
+  const today = new Date();
+  const diffTime = Math.abs(today - start);
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+};
+</script>
+
+<style scoped>
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+</style>
