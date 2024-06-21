@@ -47,7 +47,7 @@ const userStore = useUserStore();
 
 <script setup>
 import PersonalLayout from '~/layouts/PersonalLayout.vue';
-import { useUserStore } from '~/stores/user';
+import { useUserStore } from '~/stores/user.js';
 
 const userStore = useUserStore();
 
