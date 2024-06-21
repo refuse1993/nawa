@@ -2,24 +2,6 @@
 	<div class="bg-white p-4 rounded-lg shadow-md">
 		<form @submit.prevent="handleSubmit">
 			<div class="mb-4">
-				<label class="block text-sm font-medium text-gray-700">Date</label>
-				<input
-					type="datetime-local"
-					v-model="form.date"
-					class="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-					required
-				/>
-			</div>
-			<div class="mb-4">
-				<label class="block text-sm font-medium text-gray-700">Location</label>
-				<input
-					type="text"
-					v-model="form.location"
-					class="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-					required
-				/>
-			</div>
-			<div class="mb-4">
 				<label class="block text-sm font-medium text-gray-700">YouTube Link</label>
 				<input
 					type="url"
@@ -52,17 +34,6 @@
 							class="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
 							required
 						/>
-					</div>
-					<div class="mb-2">
-						<label class="block text-sm font-medium text-gray-700">Win Status</label>
-						<select
-							v-model="team.winStatus"
-							class="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-							required
-						>
-							<option :value="true">Win</option>
-							<option :value="false">Lose</option>
-						</select>
 					</div>
 					<div class="mb-2">
 						<label class="block text-sm font-medium text-gray-700">Players</label>
@@ -108,8 +79,6 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, defineEmits } from 'vue';
-
 const props = defineProps({
 	match: {
 		type: Object,

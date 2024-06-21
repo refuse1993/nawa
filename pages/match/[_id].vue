@@ -1,6 +1,12 @@
 <template>
 	<div class="container mx-auto p-4">
 		<h1 class="text-xl font-semibold mb-4">경기 등록</h1>
+		<div class="bg-white p-4 rounded-lg shadow-md mb-4">
+			<h2 class="text-lg font-semibold">
+				{{ new Date(schedule.date).toLocaleDateString() }} - {{ schedule.location }}
+			</h2>
+			<p>{{ schedule.description }}</p>
+		</div>
 		<button @click="addMatch" class="mb-4 text-blue-500 hover:underline">새 경기 추가</button>
 		<div v-for="(match, index) in matches" :key="index" class="bg-white p-4 rounded-lg shadow-md mb-4">
 			<MatchForm
@@ -20,11 +26,14 @@
 
 <script setup>
 import MatchForm from '~/components/matches/MatchForm.vue';
+import { ref, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 
 const router = useRouter();
 const route = useRoute();
-const scheduleId = route.params.scheduleId;
-const supabase = useSupabaseClient();
+const scheduleId = ref(route.params._id);
+
+console.log('Schedule ID:', scheduleId.value); // 디버그용 로그
 
 const matches = ref([
 	{
@@ -48,6 +57,7 @@ const matches = ref([
 ]);
 
 const participants = ref([]);
+const schedule = ref({ date: '', location: '', description: '' });
 
 const addMatch = () => {
 	matches.value.push({
@@ -75,32 +85,52 @@ const removeMatch = (index) => {
 };
 
 const saveMatches = async () => {
-	const { data, error } = await supabase.from('matches').insert(
-		matches.value.map((match) => ({
-			...match,
-			scheduleId: parseInt(scheduleId),
-		}))
-	);
+	const response = await fetch('/api/matches/save', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({
+			matches: matches.value,
+			scheduleId: parseInt(scheduleId.value),
+		}),
+	});
+	const data = await response.json();
 
-	if (error) {
-		console.error('Error saving matches:', error);
+	if (data.error) {
+		console.error('Error saving matches:', data.error);
 	} else {
 		router.push('/club/schedule');
 	}
 };
 
 const fetchParticipants = async () => {
-	const { data, error } = await supabase.from('participants').select('userId, nickname').eq('scheduleId', scheduleId);
-
-	if (error) {
-		console.error('Error fetching participants:', error);
+	const response = await fetch(`/api/match/getParticipants?scheduleId=${scheduleId.value}`);
+	const data = await response.json();
+	if (data.error) {
+		console.error('Error fetching participants:', data.error);
 	} else {
 		participants.value = data;
 	}
 };
 
+const fetchSchedule = async () => {
+	const response = await fetch(`/api/schedule/getSchedule?scheduleId=${scheduleId.value}`);
+	const data = await response.json();
+	if (data.error) {
+		console.error('Error fetching schedule:', data.error);
+	} else {
+		schedule.value = data;
+	}
+};
+
 onMounted(async () => {
-	await fetchParticipants();
+	if (scheduleId.value) {
+		await fetchParticipants();
+		await fetchSchedule();
+	} else {
+		console.error('Schedule ID is undefined');
+	}
 });
 </script>
 

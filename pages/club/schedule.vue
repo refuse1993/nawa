@@ -25,12 +25,12 @@
 							>
 								{{ isParticipating(schedule.id) ? '참석 취소' : '참석' }}
 							</button>
-							<router-link
-								:to="{ name: 'match-registration', params: { scheduleId: schedule.id } }"
+							<button
+								@click="navigateToMatchRegistration(schedule.id)"
 								class="text-xs text-blue-600 hover:underline"
 							>
 								경기 등록
-							</router-link>
+							</button>
 						</div>
 					</div>
 					<div>
@@ -54,6 +54,7 @@ import Calendar from '@/components/club/ClubSchedules.vue';
 const user = useSupabaseUser();
 const schedules = ref([]);
 const participants = ref([]);
+const router = useRouter();
 
 const fetchSchedules = async (userId) => {
 	const response = await fetch('/api/club/getSchedules', {
@@ -120,6 +121,11 @@ const toggleParticipation = async (scheduleId) => {
 			id: user.value.id,
 		});
 	}
+};
+
+const navigateToMatchRegistration = (scheduleId) => {
+	localStorage.setItem('scheduleId', scheduleId);
+	router.push(`/match/${scheduleId}`);
 };
 
 const getParticipants = (scheduleId) => {
