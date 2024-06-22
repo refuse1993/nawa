@@ -26,8 +26,6 @@
 
 <script setup>
 import MatchForm from '~/components/matches/MatchForm.vue';
-import { ref, onMounted } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
 
 const router = useRouter();
 const route = useRoute();
@@ -35,34 +33,15 @@ const scheduleId = ref(route.params._id);
 
 console.log('Schedule ID:', scheduleId.value); // 디버그용 로그
 
-const matches = ref([
-	{
-		date: '',
-		location: '',
-		youtubeLink: '',
-		type: 'singles',
-		teams: [
-			{
-				score: 0,
-				winStatus: false,
-				members: [{ userId: '' }],
-			},
-			{
-				score: 0,
-				winStatus: false,
-				members: [{ userId: '' }],
-			},
-		],
-	},
-]);
+const matches = ref([]);
 
 const participants = ref([]);
 const schedule = ref({ date: '', location: '', description: '' });
 
 const addMatch = () => {
 	matches.value.push({
-		date: '',
-		location: '',
+		date: schedule.value.date,
+		location: schedule.value.location,
 		youtubeLink: '',
 		type: 'singles',
 		teams: [
@@ -84,23 +63,41 @@ const removeMatch = (index) => {
 	matches.value.splice(index, 1);
 };
 
-const saveMatches = async () => {
-	const response = await fetch('/api/matches/save', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify({
-			matches: matches.value,
-			scheduleId: parseInt(scheduleId.value),
-		}),
-	});
-	const data = await response.json();
+const isValidDate = (date) => {
+	return !isNaN(new Date(date).getTime());
+};
 
-	if (data.error) {
-		console.error('Error saving matches:', data.error);
-	} else {
-		router.push('/club/schedule');
+const saveMatches = async () => {
+	try {
+		const matchesToSave = matches.value.map((match) => {
+			if (!isValidDate(match.date)) {
+				throw new Error(`Invalid date format for match: ${match.date}`);
+			}
+			return {
+				...match,
+				date: new Date(match.date).toISOString(), // Date 형식 맞추기
+			};
+		});
+
+		const response = await fetch('/api/match/saveMatch', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				matches: matchesToSave,
+				scheduleId: parseInt(scheduleId.value),
+			}),
+		});
+		const data = await response.json();
+
+		if (data.error) {
+			console.error('Error saving matches:', data.error);
+		} else {
+			router.push('/club/schedule');
+		}
+	} catch (error) {
+		console.error('Error saving matches:', error.message);
 	}
 };
 

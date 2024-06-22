@@ -1,15 +1,19 @@
 import { PrismaClient } from '@prisma/client';
+import { readBody } from 'h3';
 
 const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
-	const body = await useBody(event);
+	if (event.req.method !== 'POST') {
+		event.res.statusCode = 405;
+		return { error: 'Method not allowed' };
+	}
+
+	const body = await readBody(event);
 
 	if (!body.scheduleId || !Array.isArray(body.matches)) {
-		throw createError({
-			statusCode: 400,
-			statusMessage: 'Invalid request body',
-		});
+		event.res.statusCode = 400;
+		return { error: 'Invalid request body' };
 	}
 
 	const { scheduleId, matches } = body;
@@ -49,15 +53,16 @@ export default defineEventHandler(async (event) => {
 
 		const result = await prisma.$transaction(createMatches);
 
+		event.res.statusCode = 200;
 		return {
 			success: true,
 			data: result,
 		};
 	} catch (error) {
 		console.error('Error saving matches:', error);
-		throw createError({
-			statusCode: 500,
-			statusMessage: 'Internal Server Error',
-		});
+		event.res.statusCode = 500;
+		return { error: 'Internal server error' };
+	} finally {
+		await prisma.$disconnect();
 	}
 });
