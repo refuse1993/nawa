@@ -97,6 +97,7 @@ model Match {
   date          DateTime
   location      String
   youtubeLink   String?
+  type      String?
   club          Club       @relation(fields: [clubId], references: [id])
   schedule      Schedule?  @relation(fields: [scheduleId], references: [id])
   teams         Team[]

@@ -19,49 +19,90 @@ export default defineEventHandler(async (event) => {
 	const { scheduleId, matches } = body;
 
 	try {
-		const createMatches = matches.map((match) => {
-			const { date, location, youtubeLink, type, teams } = match;
+		const createMatches = await Promise.all(
+			matches.map(async (match) => {
+				const { date, location, clubId, youtubeLink, type, teams } = match;
 
-			return prisma.match.create({
-				data: {
-					scheduleId: parseInt(scheduleId),
-					date: new Date(date),
-					location,
-					youtubeLink,
-					type,
-					teams: {
-						create: teams.map((team) => ({
-							score: team.score,
-							winStatus: team.winStatus,
-							members: {
-								create: team.members.map((member) => ({
-									userId: member.userId,
-								})),
-							},
-						})),
-					},
-				},
-				include: {
-					teams: {
-						include: {
-							members: true,
+				const teamsWithAverageScore = await Promise.all(
+					teams.map(async (team) => {
+						const memberScores = await Promise.all(
+							team.members.map(async (member) => {
+								const user = await prisma.user.findUnique({
+									where: { id: member.userId },
+									select: { activityScore: true },
+								});
+
+								if (!user) {
+									throw new Error(`User with id ${member.userId} not found`);
+								}
+								return user.activityScore;
+							})
+						);
+
+						const averageScore =
+							memberScores.reduce((acc, score) => acc + score, 0) / memberScores.length || 0;
+						return {
+							...team,
+							averageScore,
+							members: team.members.map((member) => ({
+								...member,
+								scoreChange: 0,
+							})),
+						};
+					})
+				);
+
+				return prisma.match.create({
+					data: {
+						scheduleId: parseInt(scheduleId),
+						date: new Date(date),
+						location,
+						youtubeLink,
+						type,
+						clubId: parseInt(clubId),
+						teams: {
+							create: teamsWithAverageScore.map((team) => ({
+								score: team.score,
+								winStatus: team.winStatus,
+								averageScore: team.averageScore,
+								members: {
+									create: team.members.map((member) => ({
+										user: {
+											connect: {
+												id: member.userId,
+											},
+										},
+										scoreChange: member.scoreChange,
+										club: {
+											connect: {
+												id: clubId,
+											},
+										},
+									})),
+								},
+							})),
 						},
 					},
-				},
-			});
-		});
-
-		const result = await prisma.$transaction(createMatches);
+					include: {
+						teams: {
+							include: {
+								members: true,
+							},
+						},
+					},
+				});
+			})
+		);
 
 		event.res.statusCode = 200;
 		return {
 			success: true,
-			data: result,
+			data: createMatches,
 		};
 	} catch (error) {
-		console.error('Error saving matches:', error);
+		console.error('Error saving matches:', error.message);
 		event.res.statusCode = 500;
-		return { error: 'Internal server error' };
+		return { error: 'Internal server error', details: error.message };
 	} finally {
 		await prisma.$disconnect();
 	}

@@ -38,20 +38,24 @@
 					<div class="mb-2">
 						<label class="block text-sm font-medium text-gray-700">Players</label>
 						<ul>
-							<li v-for="(member, memberIndex) in team.members" :key="memberIndex">
-								<select
-									v-model="member.userId"
-									class="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-									required
-								>
-									<option
-										v-for="participant in participants"
-										:key="participant.id"
-										:value="participant.userId"
+							<li v-for="(member, memberIndex) in team.members" :key="memberIndex" class="mb-2">
+								<div class="flex items-center">
+									<select
+										v-model="member.userId"
+										@change="emitUserChange"
+										class="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+										required
 									>
-										{{ participant.nickname || participant.name }}
-									</option>
-								</select>
+										<option
+											v-for="participant in participants"
+											:key="participant.id"
+											:value="participant.userId"
+										>
+											{{ participant.nickname || participant.name }}
+										</option>
+									</select>
+									<span class="ml-2 text-sm text-gray-600">{{ member.userId }}</span>
+								</div>
 							</li>
 						</ul>
 						<button
@@ -93,7 +97,7 @@ const props = defineProps({
 		required: true,
 	},
 });
-const emit = defineEmits(['remove']);
+const emit = defineEmits(['remove', 'update']);
 
 const form = ref(JSON.parse(JSON.stringify(props.match)));
 
@@ -133,6 +137,10 @@ const updateWinStatus = () => {
 			team2.winStatus = false;
 		}
 	}
+};
+
+const emitUserChange = () => {
+	emit('update', form.value);
 };
 
 watch(form.value.teams, updateWinStatus, { deep: true });

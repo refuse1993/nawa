@@ -19,6 +19,7 @@ export default defineEventHandler(async (event) => {
 		select: {
 			date: true,
 			location: true,
+			clubId: true,
 		},
 	});
 
