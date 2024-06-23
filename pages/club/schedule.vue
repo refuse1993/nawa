@@ -1,6 +1,6 @@
 <template>
 	<MainLayout>
-		<div class="min-h-screen bg-gray-100 p-4">
+		<div class="min-h-screen bg-gray-100 mt-2 p-2">
 			<div v-if="isLoading" class="flex justify-center items-center h-full">
 				<div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
 			</div>
@@ -12,41 +12,57 @@
 					:participants="participants"
 					@refresh="fetchSchedules"
 				/>
-				<div class="mt-8" v-if="userStore.user">
+				<div class="flex mt-2 items-center justify-center w-full bg-slate-600">
+					<div class="text-white">일정 상세</div>
+				</div>
+				<div class="mt-2" v-if="userStore.user">
 					<div
 						v-for="schedule in schedules"
 						:key="schedule.id"
 						class="bg-white p-4 rounded-lg shadow-md mb-4"
 					>
+						<!-- 시간 및 장소를 일렬로 배치 -->
 						<div class="flex justify-between items-center mb-2">
-							<div>
-								<h3 class="text-base font-semibold">
-									{{ new Date(schedule.date).toLocaleDateString() }} - {{ schedule.location }}
-								</h3>
-								<p class="text-sm text-gray-600">{{ schedule.description }}</p>
+							<div class="flex-1">
+								<div class="text-base font-semibold">
+									{{ formatDateTime(schedule.date) }}
+								</div>
 							</div>
-							<div class="flex space-x-2">
+							<div class="flex-1 text-right mb-1 italic">
+								<div class="text-sm">{{ schedule.location }}</div>
+							</div>
+						</div>
+
+						<!-- 아래 공간을 반으로 나누어 왼쪽에 참가자 목록 -->
+						<div class="flex">
+							<div class="w-2/3 pr-2">
+								<strong class="text-sm">참석자:</strong>
+								<ul class="list-disc list-inside text-sm text-gray-700 mt-2">
+									<li v-for="participant in getParticipants(schedule.id)" :key="participant.id">
+										{{ participant.nickname || participant.name }}
+									</li>
+								</ul>
+							</div>
+							<!-- 오른쪽 공간을 위 아래로 나누어 참석 여부와 경기 등록 버튼 배치 -->
+							<div class="w-1/3 pl-2 flex flex-col justify-start">
 								<button
 									@click="toggleParticipation(schedule.id)"
-									class="text-xs text-blue-600 hover:underline"
+									class="mb-2 text-xs px-3 py-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-150 ease-in-out"
+									:class="
+										isParticipating(schedule.id)
+											? 'bg-red-500 text-white hover:bg-red-600'
+											: 'bg-blue-500 text-white hover:bg-blue-600'
+									"
 								>
 									{{ isParticipating(schedule.id) ? '참석 취소' : '참석' }}
 								</button>
 								<button
 									@click="navigateToMatchRegistration(schedule.id)"
-									class="text-xs text-blue-600 hover:underline"
+									class="text-xs px-3 py-1 rounded-lg bg-green-500 text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-150 ease-in-out"
 								>
 									경기 등록
 								</button>
 							</div>
-						</div>
-						<div>
-							<strong class="text-sm">참석자:</strong>
-							<ul class="list-disc list-inside text-sm text-gray-700">
-								<li v-for="participant in getParticipants(schedule.id)" :key="participant.id">
-									{{ participant.nickname || participant.name }}
-								</li>
-							</ul>
 						</div>
 					</div>
 				</div>
@@ -59,6 +75,7 @@
 import MainLayout from '~/layouts/MainLayout.vue';
 import Calendar from '@/components/club/ClubSchedules.vue';
 import { useUserStore } from '~/stores/user';
+import { useRouter } from 'vue-router';
 
 const userStore = useUserStore();
 const schedules = ref([]);
@@ -158,6 +175,16 @@ const getParticipants = (scheduleId) => {
 	}
 	isLoading.value = false;
 })();
+
+const formatDateTime = (dateTime) => {
+	const options = {
+		month: 'long',
+		day: 'numeric',
+		hour: '2-digit',
+		minute: '2-digit',
+	};
+	return new Date(dateTime).toLocaleString('ko-KR', options);
+};
 </script>
 
 <style scoped>
