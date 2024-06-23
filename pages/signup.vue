@@ -4,25 +4,25 @@
 			<h2 class="text-center text-2xl font-semibold mb-6">Sign Up</h2>
 
 			<div class="flex items-center justify-center mb-6">
-				<div v-if="user" class="flex items-center text-gray-800">
+				<div v-if="userStore.user" class="flex items-center text-gray-800">
 					<img
 						class="rounded-full h-12 w-12 object-cover"
-						:src="user.identities[0].identity_data.avatar_url"
+						:src="userStore.user.identities[0].identity_data.avatar_url"
 					/>
 					<div class="ml-3 font-semibold text-lg">
-						{{ user.identities[0].identity_data.full_name }}
+						{{ userStore.user.identities[0].identity_data.full_name }}
 					</div>
 				</div>
 			</div>
 
 			<form @submit.prevent="submitForm" class="space-y-4">
-				<div v-if="user">
+				<div v-if="userStore.user">
 					<label for="nickname" class="block text-sm font-medium text-gray-700">Nickname</label>
 					<input
 						v-model="form.nickname"
 						id="nickname"
 						type="text"
-						:placeholder="user.identities[0].identity_data.full_name"
+						:placeholder="userStore.user.identities[0].identity_data.full_name"
 						class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
 					/>
 				</div>
@@ -75,8 +75,8 @@
 </template>
 
 <script setup>
-const client = useSupabaseClient();
-const user = useSupabaseUser();
+import { useUserStore } from '~/stores/user';
+const userStore = useUserStore();
 const router = useRouter();
 
 const form = ref({
@@ -84,7 +84,7 @@ const form = ref({
 	startDate: '',
 	clubId: '',
 	gender: '',
-	nickname: '', // 닉네임 필드 추가
+	nickname: '',
 });
 
 const clubs = ref([]);
@@ -96,7 +96,7 @@ const fetchClubs = async () => {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
 		const data = await response.json();
-		console.log('Fetched clubs:', data); // 데이터를 확인하는 로그 추가
+		console.log('Fetched clubs:', data);
 		if (Array.isArray(data)) {
 			clubs.value = data;
 		} else {
@@ -108,42 +108,17 @@ const fetchClubs = async () => {
 };
 
 const selectedClub = computed(() => {
-	if (Array.isArray(clubs.value)) {
-		return clubs.value.find((club) => club.id === form.value.clubId);
-	}
-	return null;
-});
-
-const checkUserExists = async (userId) => {
-	try {
-		const response = await fetch(`/api/user/checkUser?userId=${userId}`);
-		const data = await response.json();
-		return data.exists;
-	} catch (error) {
-		console.error('Error checking user:', error);
-		return false;
-	}
-};
-
-watchEffect(async () => {
-	if (user.value) {
-		console.log('User is logged in:', user.value);
-		const userExists = await checkUserExists(user.value.id);
-		if (userExists) {
-			router.push('/club/clubindex');
-		}
-	}
+	return clubs.value.find((club) => club.id === form.value.clubId);
 });
 
 onMounted(async () => {
 	await fetchClubs();
 
-	if (user.value) {
-		form.value.id = user.value.id;
-		form.value.nickname = user.identities[0].identity_data.full_name; // 기본 닉네임 설정
+	if (userStore.user) {
+		form.value.id = userStore.user.id;
+		form.value.nickname = userStore.user.identities[0].identity_data.full_name;
 
-		const userExists = await checkUserExists(user.value.id);
-		if (userExists) {
+		if (userStore.club) {
 			router.push('/club/clubindex');
 		}
 	}
@@ -164,7 +139,7 @@ const submitForm = async () => {
 				startDate: form.value.startDate,
 				clubId: form.value.clubId,
 				gender: form.value.gender,
-				nickname: form.value.nickname, // 닉네임 필드 추가
+				nickname: form.value.nickname,
 			}),
 		});
 		const data = await response.json();

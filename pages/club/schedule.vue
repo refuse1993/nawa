@@ -2,13 +2,13 @@
 	<MainLayout>
 		<div class="min-h-screen bg-gray-100 p-4">
 			<Calendar
-				v-if="user"
+				v-if="userStore.user"
 				:schedules="schedules"
-				:userId="user.id"
+				:userId="userStore.user.id"
 				:participants="participants"
 				@refresh="fetchSchedules"
 			/>
-			<div class="mt-8" v-if="user">
+			<div class="mt-8" v-if="userStore.user">
 				<h2 class="text-xl font-semibold mb-4">Schedules</h2>
 				<div v-for="schedule in schedules" :key="schedule.id" class="bg-white p-4 rounded-lg shadow-md mb-4">
 					<div class="flex justify-between items-center mb-2">
@@ -50,8 +50,9 @@
 <script setup>
 import MainLayout from '~/layouts/MainLayout.vue';
 import Calendar from '@/components/club/ClubSchedules.vue';
+import { useUserStore } from '~/stores/user';
 
-const user = useSupabaseUser();
+const userStore = useUserStore();
 const schedules = ref([]);
 const participants = ref([]);
 const router = useRouter();
@@ -80,7 +81,7 @@ const fetchParticipants = async () => {
 
 const isParticipating = (scheduleId) => {
 	return participants.value.some(
-		(participant) => participant.scheduleId === scheduleId && participant.userId === user.value.id
+		(participant) => participant.scheduleId === scheduleId && participant.userId === userStore.user.id
 	);
 };
 
@@ -94,12 +95,12 @@ const toggleParticipation = async (scheduleId) => {
 			},
 			body: JSON.stringify({
 				scheduleId: scheduleId,
-				userId: user.value.id,
+				userId: userStore.user.id,
 			}),
 		});
 		// 참석자 목록에서 제거
 		participants.value = participants.value.filter(
-			(participant) => !(participant.scheduleId === scheduleId && participant.userId === user.value.id)
+			(participant) => !(participant.scheduleId === scheduleId && participant.userId === userStore.user.id)
 		);
 	} else {
 		// 참석
@@ -110,15 +111,15 @@ const toggleParticipation = async (scheduleId) => {
 			},
 			body: JSON.stringify({
 				scheduleId: scheduleId,
-				userId: user.value.id,
+				userId: userStore.user.id,
 			}),
 		});
 		// 참석자 목록에 추가
 		participants.value.push({
 			scheduleId: scheduleId,
-			userId: user.value.id,
-			nickname: user.value.nickname || user.value.name, // nickname이나 name 사용
-			id: user.value.id,
+			userId: userStore.user.id,
+			nickname: userStore.user.nickname || userStore.user.name, // nickname이나 name 사용
+			id: userStore.user.id,
 		});
 	}
 };
@@ -133,8 +134,8 @@ const getParticipants = (scheduleId) => {
 };
 
 onMounted(async () => {
-	if (user.value) {
-		await fetchSchedules(user.value.id);
+	if (userStore.user) {
+		await fetchSchedules(userStore.user.id);
 		await fetchParticipants();
 	}
 });

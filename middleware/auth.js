@@ -1,16 +1,15 @@
-export default async function ({ $supabase, route, redirect }) {
-	const user = $supabase.auth.user();
+import { useUserStore } from '~/stores/user';
 
-	if (!user && route.name !== 'auth') {
+export default async function ({ store, route, redirect }) {
+	const userStore = useUserStore();
+
+	await userStore.setUser();
+
+	if (!userStore.user && route.name !== 'auth') {
 		return redirect('/auth');
 	}
 
-	if (user) {
-		const userId = user.id;
-		const response = await fetch(`/api/user/checkUser?userId=${userId}`);
-		const data = await response.json();
-		if (!data.exists && route.name !== 'signup') {
-			return redirect('/signup');
-		}
+	if (userStore.user && !userStore.club && route.name !== 'signup') {
+		return redirect('/signup');
 	}
 }
