@@ -65,8 +65,6 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
-import { useRouter } from 'vue-router';
 import { useNavigationStore } from '~/stores/navigation';
 
 const router = useRouter();

@@ -1,6 +1,6 @@
 <template>
 	<MainLayout>
-		<div class="min-h-screen bg-gray-100 p-4">
+		<div class="min-h-screen bg-gray-100 mt-2">
 			<ClubMembers />
 		</div>
 	</MainLayout>

@@ -76,6 +76,7 @@
 
 <script setup>
 import { useUserStore } from '~/stores/user';
+
 const userStore = useUserStore();
 const router = useRouter();
 
@@ -85,6 +86,7 @@ const form = ref({
 	clubId: '',
 	gender: '',
 	nickname: '',
+	iconUrl: '',
 });
 
 const clubs = ref([]);
@@ -111,12 +113,13 @@ const selectedClub = computed(() => {
 	return clubs.value.find((club) => club.id === form.value.clubId);
 });
 
-onMounted(async () => {
+const initializeForm = async () => {
 	await fetchClubs();
 
 	if (userStore.user) {
 		form.value.id = userStore.user.id;
 		form.value.nickname = userStore.user.identities[0].identity_data.full_name;
+		form.value.iconUrl = userStore.user.identities[0].identity_data.avatar_url;
 
 		if (userStore.club) {
 			router.push('/club/clubindex');
@@ -125,7 +128,12 @@ onMounted(async () => {
 
 	const today = new Date().toISOString().split('T')[0];
 	form.value.startDate = today;
-});
+};
+
+// setup 내에서 즉시 실행 함수로 초기화 작업을 수행합니다.
+(async () => {
+	await initializeForm();
+})();
 
 const submitForm = async () => {
 	try {
@@ -140,6 +148,7 @@ const submitForm = async () => {
 				clubId: form.value.clubId,
 				gender: form.value.gender,
 				nickname: form.value.nickname,
+				iconUrl: form.value.iconUrl,
 			}),
 		});
 		const data = await response.json();

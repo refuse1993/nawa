@@ -1,45 +1,53 @@
 <template>
 	<MainLayout>
 		<div class="min-h-screen bg-gray-100 p-4">
-			<Calendar
-				v-if="userStore.user"
-				:schedules="schedules"
-				:userId="userStore.user.id"
-				:participants="participants"
-				@refresh="fetchSchedules"
-			/>
-			<div class="mt-8" v-if="userStore.user">
-				<h2 class="text-xl font-semibold mb-4">Schedules</h2>
-				<div v-for="schedule in schedules" :key="schedule.id" class="bg-white p-4 rounded-lg shadow-md mb-4">
-					<div class="flex justify-between items-center mb-2">
+			<div v-if="isLoading" class="flex justify-center items-center h-full">
+				<div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
+			</div>
+			<div v-else>
+				<Calendar
+					v-if="userStore.user"
+					:schedules="schedules"
+					:userId="userStore.user.id"
+					:participants="participants"
+					@refresh="fetchSchedules"
+				/>
+				<div class="mt-8" v-if="userStore.user">
+					<div
+						v-for="schedule in schedules"
+						:key="schedule.id"
+						class="bg-white p-4 rounded-lg shadow-md mb-4"
+					>
+						<div class="flex justify-between items-center mb-2">
+							<div>
+								<h3 class="text-base font-semibold">
+									{{ new Date(schedule.date).toLocaleDateString() }} - {{ schedule.location }}
+								</h3>
+								<p class="text-sm text-gray-600">{{ schedule.description }}</p>
+							</div>
+							<div class="flex space-x-2">
+								<button
+									@click="toggleParticipation(schedule.id)"
+									class="text-xs text-blue-600 hover:underline"
+								>
+									{{ isParticipating(schedule.id) ? '참석 취소' : '참석' }}
+								</button>
+								<button
+									@click="navigateToMatchRegistration(schedule.id)"
+									class="text-xs text-blue-600 hover:underline"
+								>
+									경기 등록
+								</button>
+							</div>
+						</div>
 						<div>
-							<h3 class="text-base font-semibold">
-								{{ new Date(schedule.date).toLocaleDateString() }} - {{ schedule.location }}
-							</h3>
-							<p class="text-sm text-gray-600">{{ schedule.description }}</p>
+							<strong class="text-sm">참석자:</strong>
+							<ul class="list-disc list-inside text-sm text-gray-700">
+								<li v-for="participant in getParticipants(schedule.id)" :key="participant.id">
+									{{ participant.nickname || participant.name }}
+								</li>
+							</ul>
 						</div>
-						<div class="flex space-x-2">
-							<button
-								@click="toggleParticipation(schedule.id)"
-								class="text-xs text-blue-600 hover:underline"
-							>
-								{{ isParticipating(schedule.id) ? '참석 취소' : '참석' }}
-							</button>
-							<button
-								@click="navigateToMatchRegistration(schedule.id)"
-								class="text-xs text-blue-600 hover:underline"
-							>
-								경기 등록
-							</button>
-						</div>
-					</div>
-					<div>
-						<strong class="text-sm">참석자:</strong>
-						<ul class="list-disc list-inside text-sm text-gray-700">
-							<li v-for="participant in getParticipants(schedule.id)" :key="participant.id">
-								{{ participant.nickname || participant.name }}
-							</li>
-						</ul>
 					</div>
 				</div>
 			</div>
@@ -55,27 +63,36 @@ import { useUserStore } from '~/stores/user';
 const userStore = useUserStore();
 const schedules = ref([]);
 const participants = ref([]);
+const isLoading = ref(true);
 const router = useRouter();
 
 const fetchSchedules = async (userId) => {
-	const response = await fetch('/api/club/getSchedules', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify({ userId }),
-	});
-	const data = await response.json();
-	schedules.value = data;
+	try {
+		const response = await fetch('/api/club/getSchedules', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ userId }),
+		});
+		const data = await response.json();
+		schedules.value = data;
+	} catch (error) {
+		console.error('Failed to fetch schedules:', error);
+	}
 };
 
 const fetchParticipants = async () => {
-	const response = await fetch('/api/schedule/getParticipants');
-	const data = await response.json();
-	if (Array.isArray(data)) {
-		participants.value = data;
-	} else {
-		participants.value = [];
+	try {
+		const response = await fetch('/api/schedule/getParticipants');
+		const data = await response.json();
+		if (Array.isArray(data)) {
+			participants.value = data;
+		} else {
+			participants.value = [];
+		}
+	} catch (error) {
+		console.error('Failed to fetch participants:', error);
 	}
 };
 
@@ -133,14 +150,29 @@ const getParticipants = (scheduleId) => {
 	return participants.value.filter((participant) => participant.scheduleId === scheduleId);
 };
 
-onMounted(async () => {
+// setup 내에서 즉시 실행 함수로 초기화 작업을 수행합니다.
+(async () => {
 	if (userStore.user) {
 		await fetchSchedules(userStore.user.id);
 		await fetchParticipants();
 	}
-});
+	isLoading.value = false;
+})();
 </script>
 
 <style scoped>
-/* Add additional styles if necessary */
+.loader {
+	border-color: #3490dc;
+	border-top-color: transparent;
+	animation: spinner 1s linear infinite;
+}
+
+@keyframes spinner {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
 </style>

@@ -9,7 +9,7 @@
 		</div>
 
 		<!-- 페이지 콘텐츠 -->
-		<div class="flex-1 w-full max-w-[500px] mx-auto mt-[100px] mb-[60px]">
+		<div class="flex-1 w-full max-w-[500px] mx-auto mt-[80px] mb-[60px]">
 			<!-- 헤더와 하단 내비게이션 높이만큼 마진 추가 -->
 			<slot />
 		</div>

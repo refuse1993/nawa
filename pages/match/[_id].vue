@@ -2,10 +2,9 @@
 	<div class="container mx-auto p-4">
 		<h1 class="text-xl font-semibold mb-4">경기 등록</h1>
 		<div class="bg-white p-4 rounded-lg shadow-md mb-4">
-			<h2 class="text-lg font-semibold">
+			<div class="text-lg font-semibold">
 				{{ new Date(schedule.date).toLocaleDateString() }} - {{ schedule.location }}
-			</h2>
-			<p>{{ schedule.description }}</p>
+			</div>
 		</div>
 		<button @click="addMatch" class="mb-4 text-blue-500 hover:underline">새 경기 추가</button>
 		<div v-for="(match, index) in matches" :key="index" class="bg-white p-4 rounded-lg shadow-md mb-4">
@@ -33,7 +32,26 @@ const scheduleId = ref(route.params._id);
 
 console.log('Schedule ID:', scheduleId.value); // 디버그용 로그
 
-const matches = ref([]);
+const matches = ref([
+	{
+		date: '',
+		location: '',
+		youtubeLink: '',
+		type: 'singles',
+		teams: [
+			{
+				score: 0,
+				winStatus: false,
+				members: [{ userId: '' }],
+			},
+			{
+				score: 0,
+				winStatus: false,
+				members: [{ userId: '' }],
+			},
+		],
+	},
+]);
 
 const participants = ref([]);
 const schedule = ref({ date: '', location: '', description: '' });

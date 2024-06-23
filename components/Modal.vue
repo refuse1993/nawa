@@ -26,19 +26,21 @@
 
 <script setup>
 import { useUserStore } from '~/stores/user';
+
 const userStore = useUserStore();
 const client = useSupabaseClient();
-const user = useSupabaseUser();
+const router = useRouter();
 
 const logout = async () => {
 	await client.auth.signOut();
 	nextTick(() => {
 		userStore.isLogoutOverlay = false;
-		return navigateTo('/auth');
+		router.push('/auth');
 	});
 };
+
 const deleteAccount = async () => {
-	if (!user.value) {
+	if (!userStore.user) {
 		console.error('No user is logged in');
 		return;
 	}
@@ -54,14 +56,14 @@ const deleteAccount = async () => {
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify({ userId: user.value.id }),
+			body: JSON.stringify({ userId: userStore.user.id }),
 		});
 
 		if (response.ok) {
 			console.log('User deleted successfully');
 			await client.auth.signOut();
 			userStore.isLogoutOverlay = false;
-			router.push('/signup');
+			router.push('/auth');
 		} else {
 			const data = await response.json();
 			console.error('Error deleting user:', data.error);

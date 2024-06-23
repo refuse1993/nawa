@@ -5,8 +5,7 @@ import MatchDetails from '~/components/club/MatchDetails.vue';
 
 <template>
 	<MainLayout>
-		<div class="min-h-screen bg-gray-100 p-4">
-			<h1 class="text-4xl font-bold mb-8">Club Matches</h1>
+		<div class="min-h-screen bg-gray-100 mt-2">
 			<MatchDetails />
 		</div>
 	</MainLayout>

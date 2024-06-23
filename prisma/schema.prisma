@@ -18,6 +18,7 @@ model User {
   id            String    @id @default(uuid())
   gender        String?
   nickname        String?
+  iconUrl        String?
   startDate     DateTime?
   clubId        Int?
   activityScore Int       @default(0)

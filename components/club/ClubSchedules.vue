@@ -96,13 +96,4 @@ const nextMonth = () => {
 	border-radius: 0.5rem;
 	box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
 }
-.bg-blue-500 {
-	background-color: #3b82f6 !important;
-}
-.bg-green-500 {
-	background-color: #10b981 !important;
-}
-.text-white {
-	color: #ffffff !important;
-}
 </style>
