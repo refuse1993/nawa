@@ -19,7 +19,7 @@ watchEffect(async () => {
 
 <template>
 	<MainLayout>
-		<div class="flex flex-col items-center justify-center min-h-[20vh]">
+		<div class="flex flex-col items-center justify-center mt-2">
 			<UserClubInfo />
 		</div>
 	</MainLayout>
