@@ -22,50 +22,63 @@
 				</select>
 			</div>
 			<div class="mb-4">
-				<h2 class="text-lg font-semibold mb-2">Teams</h2>
-				<div v-for="(team, teamIndex) in form.teams" :key="teamIndex" class="bg-gray-100 p-4 rounded-lg mb-4">
-					<h3 class="text-sm font-semibold mb-2">Team {{ teamIndex + 1 }}</h3>
-					<div class="mb-2">
-						<label class="block text-sm font-medium text-gray-700">Score</label>
-						<input
-							type="number"
-							v-model="team.score"
-							@input="updateWinStatus"
-							class="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-							required
-						/>
-					</div>
-					<div class="mb-2">
-						<label class="block text-sm font-medium text-gray-700">Players</label>
-						<ul>
-							<li v-for="(member, memberIndex) in team.members" :key="memberIndex" class="mb-2">
-								<div class="flex items-center">
-									<select
-										v-model="member.userId"
-										@change="emitUserChange"
-										class="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-										required
+				<div class="flex">
+					<div v-for="(team, teamIndex) in form.teams" :key="teamIndex" class="w-1/2 p-2">
+						<div class="bg-gray-100 p-4 rounded-lg mb-4">
+							<div class="text-sm font-semibold mb-2">Team {{ teamIndex + 1 }}</div>
+							<div class="mb-2">
+								<label class="block text-sm font-medium text-gray-700">Score</label>
+								<div class="flex items-center mb-2">
+									<button
+										@click="decrementScore(teamIndex)"
+										type="button"
+										class="text-xs bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-600"
 									>
-										<option
-											v-for="participant in participants"
-											:key="participant.id"
-											:value="participant.userId"
-										>
-											{{ participant.nickname || participant.name }}
-										</option>
-									</select>
-									<span class="ml-2 text-sm text-gray-600">{{ member.userId }}</span>
+										-
+									</button>
+									<span class="mx-2">{{ team.score }}</span>
+									<button
+										@click="incrementScore(teamIndex)"
+										type="button"
+										class="text-xs bg-blue-500 text-white px-2 py-1 rounded-md hover:bg-blue-600"
+									>
+										+
+									</button>
 								</div>
-							</li>
-						</ul>
-						<button
-							type="button"
-							@click="addPlayer(teamIndex)"
-							v-if="form.type === 'doubles' && team.members.length < 2"
-							class="mt-2 text-blue-500 hover:underline text-xs"
-						>
-							Add Player
-						</button>
+							</div>
+							<div class="mb-2">
+								<label class="block text-sm font-medium text-gray-700">Players</label>
+								<ul>
+									<li v-for="(member, memberIndex) in team.members" :key="memberIndex" class="mb-2">
+										<div class="flex items-center">
+											<select
+												v-model="member.userId"
+												@change="emitUserChange"
+												class="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+												required
+											>
+												<option
+													v-for="participant in participants"
+													:key="participant.id"
+													:value="participant.userId"
+												>
+													{{ participant.nickname || participant.name }}
+												</option>
+											</select>
+											<span class="ml-2 text-sm text-gray-600">{{ member.userId }}</span>
+										</div>
+									</li>
+								</ul>
+								<button
+									type="button"
+									@click="addPlayer(teamIndex)"
+									v-if="form.type === 'doubles' && team.members.length < 2"
+									class="mt-2 text-blue-500 hover:underline text-xs"
+								>
+									Add Player
+								</button>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -139,6 +152,20 @@ const updateWinStatus = () => {
 	}
 };
 
+const incrementScore = (teamIndex) => {
+	form.value.teams[teamIndex].score += 1;
+	updateWinStatus();
+	emit('update', form.value);
+};
+
+const decrementScore = (teamIndex) => {
+	if (form.value.teams[teamIndex].score > 0) {
+		form.value.teams[teamIndex].score -= 1;
+		updateWinStatus();
+		emit('update', form.value);
+	}
+};
+
 const emitUserChange = () => {
 	emit('update', form.value);
 };
@@ -149,3 +176,9 @@ onMounted(() => {
 	updateTeams();
 });
 </script>
+
+<style scoped>
+button {
+	margin: 0 5px;
+}
+</style>

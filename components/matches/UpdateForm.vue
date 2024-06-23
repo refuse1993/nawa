@@ -73,17 +73,20 @@
 				<button
 					type="button"
 					@click="handleRemove"
-					class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 mr-2"
+					class="text-xs bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 mr-2"
 				>
 					Remove
 				</button>
-				<button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 mr-2">
+				<button
+					type="submit"
+					class="text-xs bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 mr-2"
+				>
 					Save
 				</button>
 				<button
 					type="button"
 					@click="$emit('cancel')"
-					class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
+					class="text-xs bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
 				>
 					Cancel
 				</button>

@@ -4,6 +4,33 @@
 			<div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
 		</div>
 		<div v-else>
+			<!-- 삭제 확인 모달 -->
+			<div
+				v-if="showDeleteModal"
+				class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50"
+			>
+				<div class="bg-white p-6 rounded-lg shadow-lg w-80">
+					<div class="text-sm font-semibold mb-4">경기 삭제</div>
+					<p class="mb-4">이 경기를 삭제하시겠습니까?</p>
+					<div class="flex justify-end text-xs">
+						<button
+							@click="closeDeleteModal"
+							type="button"
+							class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 mr-2"
+						>
+							취소
+						</button>
+						<button
+							@click="confirmDeleteMatch"
+							type="button"
+							class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+						>
+							삭제
+						</button>
+					</div>
+				</div>
+			</div>
+
 			<div v-for="(group, scheduleId) in groupedMatches" :key="scheduleId" class="mb-3">
 				<div class="text-xs font-semibold mb-1 text-gray-700 flex justify-center">
 					{{ group.date }} {{ group.location }}
@@ -41,8 +68,8 @@
 								<div v-for="team in match.teams" :key="team.id" class="mb-1">
 									<div
 										:class="[
-											'text-xs mr-2 rounded-md shadow-sm',
-											team.winStatus ? 'bg-green-100' : 'bg-red-100',
+											'text-xs mr-2 rounded-md shadow-sm text-white',
+											team.winStatus ? 'bg-green-500' : 'bg-red-500',
 										]"
 									>
 										<div class="text-center text-xs font-semibold">{{ team.score }}</div>
@@ -62,7 +89,7 @@
 									수정
 								</button>
 								<button
-									@click="deleteMatch(match.id)"
+									@click="openDeleteModal(match.id)"
 									class="text-xs text-red-500 hover:underline ml-2 mr-2"
 								>
 									삭제
@@ -87,6 +114,8 @@ const expandedMatches = ref([]);
 const editingMatchId = ref(null);
 const isLoading = ref(true);
 const participants = ref([]);
+const showDeleteModal = ref(false);
+const matchToDelete = ref(null);
 
 const fetchMatches = async (userId) => {
 	try {
@@ -122,14 +151,27 @@ const toggleExpand = (matchId) => {
 	}
 };
 
-const deleteMatch = async (matchId) => {
+const openDeleteModal = (matchId) => {
+	matchToDelete.value = matchId;
+	showDeleteModal.value = true;
+};
+
+const closeDeleteModal = () => {
+	matchToDelete.value = null;
+	showDeleteModal.value = false;
+};
+
+const confirmDeleteMatch = async () => {
+	if (!matchToDelete.value) return;
+
 	try {
-		const response = await fetch(`/api/match/deleteMatch?matchId=${matchId}`, {
+		const response = await fetch(`/api/match/deleteMatch?matchId=${matchToDelete.value}`, {
 			method: 'DELETE',
 		});
 		const result = await response.json();
 		if (result.success) {
-			matches.value = matches.value.filter((match) => match.id !== matchId);
+			matches.value = matches.value.filter((match) => match.id !== matchToDelete.value);
+			closeDeleteModal();
 		} else {
 			console.error('Failed to delete match:', result.error);
 		}

@@ -1,4 +1,3 @@
-// /server/api/schedule/getParticipants.js
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -11,6 +10,7 @@ export default defineEventHandler(async (event) => {
 				select: {
 					id: true,
 					nickname: true,
+					iconUrl: true, // Include icon URL
 				},
 			},
 		},
@@ -20,5 +20,6 @@ export default defineEventHandler(async (event) => {
 		scheduleId: participant.scheduleId,
 		userId: participant.userId,
 		nickname: participant.user.nickname,
+		iconUrl: participant.user.iconUrl, // Include icon URL
 	}));
 });

@@ -31,5 +31,6 @@ export default defineEventHandler(async (event) => {
 		scheduleId: participant.scheduleId,
 		userId: participant.userId,
 		nickname: participant.user.nickname,
+		iconUrl: participant.user.iconUrl,
 	}));
 });
