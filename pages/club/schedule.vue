@@ -130,10 +130,7 @@
 
                         <!-- 아래 공간을 반으로 나누어 왼쪽에 참가자 목록 -->
                         <div class="flex">
-                            <div class="w-2/3 pl-2 mb-1">
-                                <div class="text-xl font-semibold">
-                                    참석 {{ getParticipants(schedule.id).length }}명
-                                </div>
+                            <div class="w-2/3 pl-2">
                                 <button @click="toggleParticipants(schedule.id)" class="text-xs hover:underline mt-2">
                                     <span v-if="expandedParticipants.includes(schedule.id)">
                                         <div class="text-xs p-0.5 bg-red-700 w-[100px] rounded-xl text-white">
@@ -151,16 +148,13 @@
                                     class="mt-2 text-sm text-gray-700"
                                 >
                                     <li v-for="participant in getParticipants(schedule.id)" :key="participant.id">
-                                        <img
-                                            :src="participant.iconUrl || '/user.png'"
-                                            class="w-5 h-5 shadow-md rounded-full inline"
-                                        />
+                                        <img :src="participant.iconUrl" class="w-5 h-5 shadow-md rounded-full inline" />
                                         {{ participant.nickname || participant.name }}
                                     </li>
                                 </ul>
                             </div>
                             <!-- 오른쪽 공간을 위 아래로 나누어 참석 여부와 경기 등록 버튼 배치 -->
-                            <div class="w-1/3 pl-2 flex flex-col justify-center mr-1">
+                            <div class="w-1/3 pl-2 flex flex-col justify-center">
                                 <button
                                     @click="toggleParticipation(schedule.id)"
                                     class="mb-0.5 text-xs p-0.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-150 ease-in-out"
@@ -174,7 +168,7 @@
                                 </button>
                                 <button
                                     @click="navigateToMatchRegistration(schedule.id)"
-                                    class="mb-0.5 mt-0.5 text-xs p-0.5 rounded-lg bg-black text-white hover:bg-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 transition-all duration-150 ease-in-out"
+                                    class="mb-0.5 text-xs p-0.5 rounded-lg bg-green-500 text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-150 ease-in-out"
                                 >
                                     경기 결과 등록
                                 </button>
@@ -204,7 +198,7 @@ const scheduleDate = ref("");
 const scheduleTime = ref("");
 const scheduleLocation = ref("");
 const router = useRouter();
-const scheduleToDelete = ref(null); // 삭제할 일정 ID
+const scheduleToDelete = ref(null);
 
 const fetchSchedules = async (userId) => {
     try {

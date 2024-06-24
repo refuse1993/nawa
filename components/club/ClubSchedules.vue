@@ -25,6 +25,7 @@
 
 <script setup>
 import { useUserStore } from '~/stores/user';
+import { ref, computed } from 'vue';
 
 const props = defineProps({
 	schedules: {
@@ -52,32 +53,28 @@ const dates = computed(() => Array.from({ length: daysInMonth.value }, (_, i) =>
 
 const hasScheduleOnDate = (date) => {
 	const checkDate = new Date(currentYear.value, currentMonth.value, date);
-	console.log('Checking for schedule on date:', checkDate); // 추가
 	return props.schedules.some((schedule) => {
 		const scheduleDate = new Date(schedule.date);
-		const result =
+		return (
 			scheduleDate.getFullYear() === checkDate.getFullYear() &&
 			scheduleDate.getMonth() === checkDate.getMonth() &&
-			scheduleDate.getDate() === checkDate.getDate();
-		console.log('Schedule:', schedule, 'Result:', result); // 추가
-		return result;
+			scheduleDate.getDate() === checkDate.getDate()
+		);
 	});
 };
 
 const isParticipatingOnDate = (date) => {
 	const checkDate = new Date(currentYear.value, currentMonth.value, date);
-	console.log('Checking for participation on date:', checkDate); // 추가
 	return props.schedules.some((schedule) => {
 		const scheduleDate = new Date(schedule.date);
-		const result =
+		return (
 			scheduleDate.getFullYear() === checkDate.getFullYear() &&
 			scheduleDate.getMonth() === checkDate.getMonth() &&
 			scheduleDate.getDate() === checkDate.getDate() &&
 			props.participants.some(
 				(participant) => participant.scheduleId === schedule.id && participant.userId === userStore.user?.id
-			);
-		console.log('Schedule:', schedule, 'Participant:', result); // 추가
-		return result;
+			)
+		);
 	});
 };
 
@@ -88,10 +85,6 @@ const prevMonth = () => {
 const nextMonth = () => {
 	current.value = new Date(currentYear.value, currentMonth.value + 1, 1);
 };
-
-console.log('Schedules:', props.schedules);
-console.log('Participants:', props.participants);
-console.log('User ID:', userStore.user?.id);
 </script>
 
 <style scoped>

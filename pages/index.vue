@@ -22,12 +22,15 @@ const checkUserExists = async (userId) => {
 		return data.exists;
 	} catch (error) {
 		console.error('Error checking user:', error);
+		alert('Failed to check user existence. Please try again.');
 		return false;
 	}
 };
 
 watchEffect(async () => {
-	await userStore.setUser();
+	if (!userStore.user) {
+		await userStore.setUser();
+	}
 
 	if (userStore.user) {
 		console.log('User is logged in:', userStore.user);
