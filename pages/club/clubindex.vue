@@ -21,7 +21,7 @@ watchEffect(async () => {
 
 <template>
     <MainLayout>
-        <div class="min-h-screen flex flex-col items-center mt-2">
+        <div class="min-h-screen flex flex-col w-full items-center mt-2">
             <UserClubInfo />
         </div>
     </MainLayout>

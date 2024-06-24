@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "./generated/client"
 }
 
 datasource db {
@@ -36,7 +35,7 @@ model Club {
   id              Int       @id @default(autoincrement())
   name            String
   logoUrl         String?
-  representativeId Int
+  representativeId String?
   creationDate    DateTime
   activityScore   Int       @default(0)
   members         Member[]

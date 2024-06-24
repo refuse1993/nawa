@@ -1,29 +1,29 @@
 <template>
-    <div class="max-h-[20vh] p-4 bg-white rounded-lg shadow-md flex flex-col items-center text-center">
+    <div class="p-2 bg-white rounded-lg shadow-md flex flex-col items-center text-center w-[300px]">
         <div v-if="loading" class="flex justify-center items-center h-full">
             <p>Loading...</p>
         </div>
         <div v-else>
-            <div v-if="club" class="w-full">
-                <img :src="club.logoUrl" alt="Club Logo" class="w-24 h-24 rounded-full mb-4 object-cover" />
-                <h2 class="text-2xl font-sans mb-2">{{ club.name }}</h2>
-                <p class="text-sm text-gray-600 mb-4">클럽 대표: {{ clubRepresentative }}</p>
-                <div class="grid grid-cols-2 gap-4 text-sm">
-                    <div class="bg-gray-100 p-2 rounded-lg">
-                        <p class="font-semibold">인원</p>
+            <div v-if="club" class="w-full flex flex-col items-center">
+                <div class="flex w-full items-center">
+                    <img :src="club.logoUrl" alt="Club Logo" class="w-24 h-24 rounded-full mb-4 object-cover" />
+                    <div class="ml-4 flex flex-col items-start text-left">
+                        <h2 class="text-2xl font-sans mb-2">{{ club.name }}</h2>
+                        <p class="text-sm text-gray-600 mb-4">클럽 대표: {{ clubRepresentative }}</p>
+                    </div>
+                </div>
+                <div class="flex w-full text-sm justify-between">
+                    <div class="p-2 flex-1 basis-1/3 shrink-0 text-center border-x-2 border-blue-500">
+                        <p class="font-semibold">Members</p>
                         <p>{{ clubMembers }}명</p>
                     </div>
-                    <div class="bg-gray-100 p-2 rounded-lg">
-                        <p class="font-semibold">활동 점수</p>
+                    <div class="p-2 flex-1 basis-1/3 shrink-0 text-center border-r-2 border-blue-500">
+                        <p class="font-semibold">Point</p>
                         <p>{{ club.activityScore }}</p>
                     </div>
-                    <div class="bg-gray-100 p-2 rounded-lg">
-                        <p class="font-semibold">총 경기수</p>
+                    <div class="p-2 flex-1 basis-1/3 shrink-0 text-center border-r border-blue-500">
+                        <p class="font-semibold">Match</p>
                         <p>{{ totalMatches }}</p>
-                    </div>
-                    <div class="bg-gray-100 p-2 rounded-lg">
-                        <p class="font-semibold">승률</p>
-                        <p>{{ winRate }}%</p>
                     </div>
                 </div>
             </div>
