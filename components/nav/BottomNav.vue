@@ -7,12 +7,10 @@
             >
                 <Icon
                     :name="activeTab === 'club' ? 'material-symbols:home' : 'material-symbols:home-outline'"
-                    :color="activeTab === 'club' ? '#ffeb3b' : '#ffffff'"
+                    :color="activeTab === 'club' ? '#ffffff' : '#9d9d9d'"
                     size="23"
                 ></Icon>
-                <div :class="activeTab === 'club' ? 'text-yellow-300' : 'text-gray-100'" class="leading-3 text-xs">
-                    클럽
-                </div>
+                <div :class="activeTab === 'club' ? 'text-white' : 'text-gray-500'" class="leading-3 text-xs">클럽</div>
             </button>
             <button
                 @click="setActiveTab('schedule', '/schedule')"
@@ -24,11 +22,11 @@
                             ? 'material-symbols:calendar-today'
                             : 'material-symbols:calendar-today-outline'
                     "
-                    :color="activeTab === 'schedule' ? '#ffeb3b' : '#ffffff'"
+                    :color="activeTab === 'schedule' ? '#ffffff' : '#9d9d9d'"
                     size="18"
                     class="mb-1"
                 ></Icon>
-                <div :class="activeTab === 'schedule' ? 'text-yellow-300' : 'text-gray-100'" class="leading-3 text-xs">
+                <div :class="activeTab === 'schedule' ? 'text-white' : 'text-gray-500'" class="leading-3 text-xs">
                     일정
                 </div>
             </button>
@@ -38,14 +36,11 @@
             >
                 <Icon
                     :name="activeTab === 'records' ? 'ri:align-item-bottom-fill' : 'ri:align-item-bottom-line'"
-                    :color="activeTab === 'records' ? '#ffeb3b' : '#ffffff'"
+                    :color="activeTab === 'records' ? '#ffffff' : '#9d9d9d'"
                     size="19"
                     class="mb-1"
                 ></Icon>
-                <div
-                    :class="activeTab === 'records' ? 'text-yellow-300' : 'text-gray-100'"
-                    class="leading-3 text-xs px-8"
-                >
+                <div :class="activeTab === 'records' ? 'text-white' : 'text-gray-500'" class="leading-3 text-xs px-8">
                     전적
                 </div>
             </button>
@@ -55,11 +50,11 @@
             >
                 <Icon
                     :name="activeTab === 'other' ? 'material-symbols:person' : 'material-symbols:person-outline'"
-                    :color="activeTab === 'other' ? '#ffeb3b' : '#ffffff'"
+                    :color="activeTab === 'other' ? '#ffffff' : '#9d9d9d'"
                     size="19"
                     class="mb-1"
                 ></Icon>
-                <div :class="activeTab === 'other' ? 'text-yellow-300' : 'text-gray-100'" class="leading-3 text-xs">
+                <div :class="activeTab === 'other' ? 'text-white' : 'text-gray-500'" class="leading-3 text-xs">
                     내정보
                 </div>
             </button>
