@@ -16,6 +16,8 @@
 
 <script setup>
 import { useUserStore } from '~/stores/user';
+import { useSupabaseClient } from '@supabase/vue';
+
 const supabase = useSupabaseClient();
 const router = useRouter();
 const userStore = useUserStore();
@@ -29,11 +31,16 @@ const login = async (prov) => {
 		},
 	});
 
-	if (error) console.log(error);
+	if (error) {
+		console.error('Login error:', error);
+		alert('Login failed. Please try again.');
+	}
 };
 
 watchEffect(async () => {
-	await userStore.setUser();
+	if (!userStore.user) {
+		await userStore.setUser();
+	}
 
 	if (userStore.user) {
 		if (userStore.club) {

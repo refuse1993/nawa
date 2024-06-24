@@ -5,7 +5,6 @@
 				<div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
 			</div>
 			<div v-else>
-				<!-- 일정 생성 모달 -->
 				<div
 					v-if="showModal"
 					class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50"
@@ -59,7 +58,6 @@
 					</div>
 				</div>
 
-				<!-- 일정 삭제 확인 모달 -->
 				<div
 					v-if="showDeleteModal"
 					class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50"
@@ -95,7 +93,6 @@
 				/>
 				<div class="flex justify-between items-center mt-2 bg-slate-600 p-2 rounded-md shadow-md">
 					<div class="text-white ml-2 text-sm font-semibold">일정 상세</div>
-					<!-- 일정 생성 버튼 -->
 					<button
 						@click="openModal"
 						class="text-slate-600 bg-white w-4 h-4 rounded-full shadow-md flex items-center justify-center"
@@ -110,7 +107,6 @@
 						:key="schedule.id"
 						class="bg-white p-0.5 rounded-lg shadow-md mt-2"
 					>
-						<!-- 시간 및 장소를 일렬로 배치 -->
 						<div class="flex justify-between items-center ml-2 mr-2">
 							<div class="flex-1">
 								<div class="text-xs font-semibold">{{ formatDateTime(schedule.date) }}</div>
@@ -128,20 +124,19 @@
 							</div>
 						</div>
 
-						<!-- 아래 공간을 반으로 나누어 왼쪽에 참가자 목록 -->
 						<div class="flex">
 							<div class="w-2/3 pl-2">
 								<button @click="toggleParticipants(schedule.id)" class="text-xs hover:underline mt-2">
 									<span v-if="expandedParticipants.includes(schedule.id)">
 										<div class="text-xs p-0.5 bg-red-700 w-[100px] rounded-xl text-white">
 											<div class="flex justify-center font-semibold">참석자 접기</div>
-										</div></span
-									>
+										</div>
+									</span>
 									<span v-else>
 										<div class="text-xs p-0.5 bg-slate-400 w-[100px] rounded-xl text-white">
 											<div class="flex justify-center font-semibold">참석자 보기</div>
-										</div></span
-									>
+										</div>
+									</span>
 								</button>
 								<ul
 									v-if="expandedParticipants.includes(schedule.id)"
@@ -153,7 +148,6 @@
 									</li>
 								</ul>
 							</div>
-							<!-- 오른쪽 공간을 위 아래로 나누어 참석 여부와 경기 등록 버튼 배치 -->
 							<div class="w-1/3 pl-2 flex flex-col justify-center">
 								<button
 									@click="toggleParticipation(schedule.id)"
@@ -186,19 +180,20 @@ import MainLayout from '~/layouts/MainLayout.vue';
 import Calendar from '@/components/club/ClubSchedules.vue';
 import { useUserStore } from '~/stores/user';
 import { useRouter } from 'vue-router';
+import { ref, onMounted } from 'vue';
 
 const userStore = useUserStore();
 const schedules = ref([]);
 const participants = ref([]);
 const isLoading = ref(true);
 const expandedParticipants = ref([]);
-const showModal = ref(false); // 모달 상태
-const showDeleteModal = ref(false); // 삭제 확인 모달 상태
+const showModal = ref(false);
+const showDeleteModal = ref(false);
 const scheduleDate = ref('');
 const scheduleTime = ref('');
 const scheduleLocation = ref('');
 const router = useRouter();
-const scheduleToDelete = ref(null); // 삭제할 일정 ID
+const scheduleToDelete = ref(null);
 
 const fetchSchedules = async (userId) => {
 	try {
@@ -237,46 +232,45 @@ const isParticipating = (scheduleId) => {
 };
 
 const toggleParticipation = async (scheduleId) => {
-	if (isParticipating(scheduleId)) {
-		// 참석 취소
-		await fetch('/api/schedule/leave', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
+	try {
+		if (isParticipating(scheduleId)) {
+			await fetch('/api/schedule/leave', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					scheduleId: scheduleId,
+					userId: userStore.user.id,
+				}),
+			});
+			participants.value = participants.value.filter(
+				(participant) => !(participant.scheduleId === scheduleId && participant.userId === userStore.user.id)
+			);
+		} else {
+			await fetch('/api/schedule/join', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					scheduleId: scheduleId,
+					userId: userStore.user.id,
+					iconUrl: userStore.user.iconUrl,
+				}),
+			});
+			participants.value.push({
 				scheduleId: scheduleId,
 				userId: userStore.user.id,
-			}),
-		});
-		// 참석자 목록에서 제거
-		participants.value = participants.value.filter(
-			(participant) => !(participant.scheduleId === scheduleId && participant.userId === userStore.user.id)
-		);
-	} else {
-		// 참석
-		await fetch('/api/schedule/join', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				scheduleId: scheduleId,
-				userId: userStore.user.id,
+				nickname: userStore.user.nickname || userStore.user.name,
+				id: userStore.user.id,
 				iconUrl: userStore.user.iconUrl,
-			}),
-		});
-		// 참석자 목록에 추가
-		participants.value.push({
-			scheduleId: scheduleId,
-			userId: userStore.user.id,
-			nickname: userStore.user.nickname || userStore.user.name, // nickname이나 name 사용
-			id: userStore.user.id,
-			iconUrl: userStore.user.iconUrl,
-		});
+			});
+		}
+		await fetchParticipants();
+	} catch (error) {
+		console.error('Error toggling participation:', error);
 	}
-	// 참가자 목록을 다시 불러옵니다.
-	await fetchParticipants();
 };
 
 const navigateToMatchRegistration = (scheduleId) => {
@@ -330,8 +324,8 @@ const createSchedule = async () => {
 		});
 		const result = await response.json();
 		if (result.success) {
-			await fetchSchedules(userStore.user.id); // 일정을 새로 고침
-			closeModal(); // 모달 닫기
+			await fetchSchedules(userStore.user.id);
+			closeModal();
 		} else {
 			console.error('Failed to create schedule:', result.error);
 		}
@@ -350,8 +344,8 @@ const deleteSchedule = async () => {
 		});
 		const result = await response.json();
 		if (result.success) {
-			await fetchSchedules(userStore.user.id); // 일정을 새로 고침
-			closeDeleteModal(); // 삭제 모달 닫기
+			await fetchSchedules(userStore.user.id);
+			closeDeleteModal();
 		} else {
 			console.error('Failed to delete schedule:', result.error);
 		}
@@ -360,14 +354,13 @@ const deleteSchedule = async () => {
 	}
 };
 
-// setup 내에서 즉시 실행 함수로 초기화 작업을 수행합니다.
-(async () => {
+onMounted(async () => {
 	if (userStore.user) {
 		await fetchSchedules(userStore.user.id);
 		await fetchParticipants();
 	}
 	isLoading.value = false;
-})();
+});
 
 const formatDateTime = (dateTime) => {
 	const options = {
