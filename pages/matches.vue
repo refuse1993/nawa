@@ -1,9 +1,12 @@
 <script setup>
-import PersonalLayout from '~/layouts/PersonalLayout.vue';
+import MainLayout from "~/layouts/MatchLayout.vue";
+import MatchDetails from "~/components/club/MatchDetails.vue";
 </script>
 
 <template>
-	<PersonalLayout>
-		<div>MY matches</div>
-	</PersonalLayout>
+    <MainLayout>
+        <div class="min-h-screen bg-gray-100 mt-2">
+            <MatchDetails />
+        </div>
+    </MainLayout>
 </template>

@@ -1,0 +1,11 @@
+/* assets/css/main.css */
+@import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css);
+
+/* Tailwind base styles */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    font-family: "Roboto", sans-serif;
+}

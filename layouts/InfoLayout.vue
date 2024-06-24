@@ -22,7 +22,7 @@
 </template>
 
 <script setup>
-import Headernav from "@/components/nav/ClubindexNav.vue";
+import Headernav from "@/components/nav/InfoNav.vue";
 import Bottomnav from "@/components/nav/BottomNav.vue";
 import { useNavigationStore } from "~/stores/navigation";
 const navigationStore = useNavigationStore();
