@@ -12,7 +12,7 @@
 				<span
 					:class="[
 						'inline-block w-6 h-6 leading-6 rounded-full cursor-pointer text-xs',
-						hasScheduleOnDate(date) ? 'bg-green-500 text-white' : '',
+						hasScheduleOnDate(date) ? 'bg-green-600 text-white' : '',
 						isParticipatingOnDate(date) ? 'bg-blue-500 text-white' : '',
 					]"
 				>

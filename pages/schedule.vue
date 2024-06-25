@@ -1,6 +1,6 @@
 <template>
 	<MainLayout>
-		<div class="min-h-screen mt-2 p-2">
+		<div class="min-h-screen mt-2">
 			<div v-if="isLoading" class="flex justify-center items-center h-full">
 				<div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
 			</div>
@@ -39,16 +39,12 @@
 					:participants="participants"
 					@refresh="fetchSchedules"
 				/>
-				<div class="flex justify-between items-center mt-2 bg-slate-600 p-2 rounded-md shadow-md">
-					<div class="text-white ml-2 text-sm font-semibold">일정 상세</div>
+				<div class="flex justify-between items-center border-b mt-2 w-full">
+					<div class="text-slate-800 ml-2 text-xs mb-1 font-semibold">일정 상세</div>
 				</div>
 
 				<div class="mt-2" v-if="userStore.user">
-					<div
-						v-for="schedule in schedules"
-						:key="schedule.id"
-						class="bg-white p-0.5 rounded-lg shadow-md mt-2"
-					>
+					<div v-for="schedule in schedules" :key="schedule.id" class="bg-white p-0.5 border-b mt-2">
 						<!-- 시간 및 장소를 일렬로 배치 -->
 						<div class="flex justify-between items-center ml-2 mr-2">
 							<div class="flex-1">
@@ -96,13 +92,13 @@
 								</ul>
 							</div>
 							<!-- 오른쪽 공간을 위 아래로 나누어 참석 여부와 경기 등록 버튼 배치 -->
-							<div class="w-1/3 pl-2 flex flex-col justify-center">
+							<div class="w-1/3 pl-2 mr-1 mb-2 ml-6 flex flex-col justify-center">
 								<button
 									@click="toggleParticipation(schedule.id)"
 									class="mb-0.5 text-xs p-0.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-150 ease-in-out"
 									:class="
 										isParticipating(schedule.id)
-											? 'bg-red-500 text-white hover:bg-red-600'
+											? 'bg-red-600 text-white hover:bg-red-600'
 											: 'bg-blue-500 text-white hover:bg-blue-600'
 									"
 								>
@@ -110,7 +106,7 @@
 								</button>
 								<button
 									@click="navigateToMatchRegistration(schedule.id)"
-									class="mb-0.5 text-xs p-0.5 rounded-lg bg-green-500 text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-150 ease-in-out"
+									class="mb-0.5 text-xs p-0.5 rounded-lg bg-green-600 text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-150 ease-in-out"
 								>
 									경기 결과 등록
 								</button>

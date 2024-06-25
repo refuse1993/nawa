@@ -35,7 +35,7 @@
 				<div class="text-xs font-semibold mb-1 text-gray-700 flex justify-center">
 					{{ group.date }} {{ group.location }}
 				</div>
-				<div v-for="match in group.matches" :key="match.id" class="bg-white shadow-md rounded-lg p-1 mb-3">
+				<div v-for="match in group.matches" :key="match.id" class="bg-white border-b p-1 mb-3">
 					<div v-if="editingMatchId === match.id">
 						<MatchForm
 							:match="match"
@@ -54,9 +54,9 @@
 						</div>
 						<div class="flex mt-2">
 							<!-- 왼쪽 영역: 팀별 선수 이름 -->
-							<div class="w-2/3">
+							<div class="w-4/5">
 								<div v-for="team in match.teams" :key="team.id" class="mb-1">
-									<div :class="['text-xs ml-2 rounded-md shadow-sm flex w-full']">
+									<div :class="['text-xs ml-2 border-b flex w-full']">
 										<div v-for="member in team.members" :key="member.id" class="mr-2">
 											{{ member.user.nickname }}
 										</div>
@@ -68,11 +68,11 @@
 								<div v-for="team in match.teams" :key="team.id" class="mb-1">
 									<div
 										:class="[
-											'text-xs mr-2 rounded-md shadow-sm text-white',
-											team.winStatus ? 'bg-green-500' : 'bg-red-500',
+											'text-xs mr-2  text-white',
+											team.winStatus ? 'bg-green-600' : 'bg-red-500',
 										]"
 									>
-										<div class="text-center text-xs font-semibold">{{ team.score }}</div>
+										<div class="text-center text-xs border-b font-semibold">{{ team.score }}</div>
 									</div>
 								</div>
 							</div>
@@ -84,13 +84,13 @@
 							<div class="flex justify-end items-center mt-2">
 								<button
 									@click="editMatch(match.id)"
-									class="text-xs text-green-500 hover:underline ml-2"
+									class="text-xs text-green-600 hover:underline ml-2"
 								>
 									수정
 								</button>
 								<button
 									@click="openDeleteModal(match.id)"
-									class="text-xs text-red-500 hover:underline ml-2 mr-2"
+									class="text-xs text-red-600 hover:underline ml-2 mr-2"
 								>
 									삭제
 								</button>
