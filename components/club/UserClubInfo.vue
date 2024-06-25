@@ -26,7 +26,7 @@
 						<p>{{ totalMatches }}</p>
 					</div>
 				</div>
-				<div class="flex text-xs w-[300px] p-2 font-sans">
+				<div class="flex text-xs whitespace-normal w-[300px] p-2 font-sans">
 					{{ club.description }}
 				</div>
 				<div class="flex overflow-x-auto w-[300px] border-y">
