@@ -43,7 +43,7 @@ watchEffect(async () => {
 
 	if (userStore.user) {
 		if (userStore.club) {
-			router.push('/club/clubindex');
+			router.push('/');
 		}
 	}
 });

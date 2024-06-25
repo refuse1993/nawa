@@ -67,7 +67,6 @@ import { v4 as uuidv4 } from 'uuid';
 const userStore = useUserStore();
 const supabase = useSupabaseClient();
 const router = useRouter();
-const userId = userStore.user.id;
 
 const showModal = ref(false);
 const clubName = ref('');
@@ -136,7 +135,7 @@ const createClub = async () => {
 			await userStore.fetchClub();
 			setTimeout(() => {
 				closeModal();
-				router.push('/club/clubindex');
+				router.push('/');
 			}, 2000);
 		} else {
 			console.log(result.error);

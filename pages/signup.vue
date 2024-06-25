@@ -122,7 +122,7 @@ const initializeForm = async () => {
 		form.value.iconUrl = userStore.user.identities[0].identity_data.avatar_url;
 
 		if (userStore.club) {
-			router.push('/club/clubindex');
+			router.push('/');
 		}
 	}
 
@@ -154,7 +154,7 @@ const submitForm = async () => {
 		const data = await response.json();
 
 		if (response.ok) {
-			router.push('/club/clubindex');
+			router.push('/');
 		} else {
 			console.error(data.error);
 		}
