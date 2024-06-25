@@ -4,6 +4,10 @@
 			<div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
 		</div>
 		<div v-else>
+			<!-- 클럽에 가입하지 않은 경우 -->
+			<div v-if="!matches.length" class="text-center">
+				<p>가입된 클럽이 없습니다.</p>
+			</div>
 			<!-- 삭제 확인 모달 -->
 			<div
 				v-if="showDeleteModal"
@@ -35,7 +39,7 @@
 				<div class="text-xs font-semibold mb-1 text-gray-700 flex justify-center">
 					{{ group.date }} {{ group.location }}
 				</div>
-				<div v-for="match in group.matches" :key="match.id" class="bg-white shadow-md rounded-lg p-1 mb-3">
+				<div v-for="match in group.matches" :key="match.id" class="bg-white border-b p-1 mb-3">
 					<div v-if="editingMatchId === match.id">
 						<MatchForm
 							:match="match"
@@ -54,9 +58,9 @@
 						</div>
 						<div class="flex mt-2">
 							<!-- 왼쪽 영역: 팀별 선수 이름 -->
-							<div class="w-2/3">
+							<div class="w-4/5">
 								<div v-for="team in match.teams" :key="team.id" class="mb-1">
-									<div :class="['text-xs ml-2 rounded-md shadow-sm flex w-full']">
+									<div :class="['text-xs ml-2 border-b flex w-full']">
 										<div v-for="member in team.members" :key="member.id" class="mr-2">
 											{{ member.user.nickname }}
 										</div>
@@ -68,11 +72,11 @@
 								<div v-for="team in match.teams" :key="team.id" class="mb-1">
 									<div
 										:class="[
-											'text-xs mr-2 rounded-md shadow-sm text-white',
-											team.winStatus ? 'bg-green-500' : 'bg-red-500',
+											'text-xs mr-2 text-white',
+											team.winStatus ? 'bg-[#434d61]' : 'bg-[#ec4624]',
 										]"
 									>
-										<div class="text-center text-xs font-semibold">{{ team.score }}</div>
+										<div class="text-center text-xs border-b font-semibold">{{ team.score }}</div>
 									</div>
 								</div>
 							</div>
@@ -84,13 +88,13 @@
 							<div class="flex justify-end items-center mt-2">
 								<button
 									@click="editMatch(match.id)"
-									class="text-xs text-green-500 hover:underline ml-2"
+									class="text-xs text-green-600 hover:underline ml-2"
 								>
 									수정
 								</button>
 								<button
 									@click="openDeleteModal(match.id)"
-									class="text-xs text-red-500 hover:underline ml-2 mr-2"
+									class="text-xs text-red-600 hover:underline ml-2 mr-2"
 								>
 									삭제
 								</button>
@@ -121,9 +125,15 @@ const fetchMatches = async (userId) => {
 	try {
 		const response = await fetch(`/api/club/getMatches?userId=${userId}`);
 		const data = await response.json();
-		matches.value = data;
+		if (data.error) {
+			console.error('Failed to fetch matches:', data.error);
+			matches.value = [];
+		} else {
+			matches.value = data;
+		}
 	} catch (error) {
 		console.error('Failed to fetch matches:', error);
+		matches.value = [];
 	} finally {
 		isLoading.value = false;
 	}
@@ -214,6 +224,8 @@ const cancelEdit = () => {
 };
 
 const groupedMatches = computed(() => {
+	if (!matches.value.length) return {};
+
 	return matches.value.reduce((groups, match) => {
 		const scheduleId = match.scheduleId || 'No Schedule';
 		const scheduleDate = match.date ? new Date(match.date).toLocaleDateString() : 'No Date';
@@ -234,7 +246,8 @@ const groupedMatches = computed(() => {
 // setup 내에서 즉시 실행 함수로 초기화 작업을 수행합니다.
 (async () => {
 	if (userStore.user) {
-		await fetchMatches(userStore.user.id);
+		const userId = userStore.user.id;
+		await fetchMatches(userId);
 		isLoading.value = false;
 	} else {
 		isLoading.value = false;

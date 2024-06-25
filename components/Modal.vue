@@ -35,6 +35,8 @@ const logout = async () => {
 	await client.auth.signOut();
 	nextTick(() => {
 		userStore.isLogoutOverlay = false;
+		userStore.user = null;
+		userStore.club = null;
 		router.push('/auth');
 	});
 };
@@ -62,6 +64,8 @@ const deleteAccount = async () => {
 		if (response.ok) {
 			console.log('User deleted successfully');
 			await client.auth.signOut();
+			userStore.user = null;
+			userStore.club = null;
 			userStore.isLogoutOverlay = false;
 			router.push('/auth');
 		} else {

@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
 			data: {
 				date: new Date(body.date),
 				location: body.location,
-				creatorId: parseInt(body.creatorId),
+				creatorId: body.creatorId,
 				clubId: 1, // 예시로, clubId를 1로 설정
 			},
 		});

@@ -65,7 +65,6 @@
 													{{ participant.nickname || participant.name }}
 												</option>
 											</select>
-											<span class="ml-2 text-sm text-gray-600">{{ member.userId }}</span>
 										</div>
 									</li>
 								</ul>
