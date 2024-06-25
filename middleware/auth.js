@@ -9,7 +9,7 @@ export default async function ({ store, route, redirect }) {
 		return redirect('/auth');
 	}
 
-	if (userStore.user && !userStore.club && route.name !== 'signup') {
+	if (userStore.user && route.name !== 'signup') {
 		return redirect('/signup');
 	}
 }

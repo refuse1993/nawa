@@ -70,13 +70,13 @@
 									<span v-if="expandedParticipants.includes(schedule.id)">
 										<div class="text-xs p-0.5 bg-red-700 w-[100px] rounded-xl text-white">
 											<div class="flex justify-center font-semibold">참석자 접기</div>
-										</div></span
-									>
+										</div>
+									</span>
 									<span v-else>
 										<div class="text-xs p-0.5 bg-slate-400 w-[100px] rounded-xl text-white">
 											<div class="flex justify-center font-semibold">참석자 보기</div>
-										</div></span
-									>
+										</div>
+									</span>
 								</button>
 								<ul
 									v-if="expandedParticipants.includes(schedule.id)"
@@ -114,6 +114,9 @@
 						</div>
 					</div>
 				</div>
+				<div v-else>
+					<p>가입된 클럽이 없습니다.</p>
+				</div>
 			</div>
 		</div>
 	</MainLayout>
@@ -147,7 +150,12 @@ const fetchSchedules = async (userId) => {
 			body: JSON.stringify({ userId }),
 		});
 		const data = await response.json();
-		schedules.value = data;
+		if (data.error) {
+			console.error('Failed to fetch schedules:', data.error);
+			schedules.value = [];
+		} else {
+			schedules.value = data;
+		}
 	} catch (error) {
 		console.error('Failed to fetch schedules:', error);
 	}

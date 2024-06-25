@@ -11,14 +11,13 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
 }
 
 model User {
   id            String    @id @default(uuid())
   gender        String?
-  nickname        String?
-  iconUrl        String?
+  nickname      String?
+  iconUrl       String?
   startDate     DateTime?
   clubId        Int?
   activityScore Int       @default(0)
@@ -27,6 +26,7 @@ model User {
   likes         Like[]
   memberships   Member[]
   scheduleParticipants ScheduleParticipants[]
+  posts         Post[]    // 유저가 작성한 게시글과의 관계
 
   @@map("users")
 }
@@ -38,10 +38,12 @@ model Club {
   representativeId String?
   creationDate    DateTime
   activityScore   Int       @default(0)
+  description String?
   members         Member[]
   schedules       Schedule[]
   matches         Match[]
   users           User[]    @relation("ClubUsers")
+  posts           Post[]    // 클럽과 게시글의 관계
 
   @@map("clubs")
 }
@@ -51,7 +53,7 @@ model Schedule {
   clubId                Int
   date                  DateTime
   location              String
-  creatorId             Int
+  creatorId             String?
   club                  Club       @relation(fields: [clubId], references: [id])
   comments              Comment[]
   scheduleParticipants  ScheduleParticipants[]
@@ -97,7 +99,7 @@ model Match {
   date          DateTime
   location      String
   youtubeLink   String?
-  type      String?
+  type          String?
   club          Club       @relation(fields: [clubId], references: [id])
   schedule      Schedule?  @relation(fields: [scheduleId], references: [id])
   teams         Team[]
@@ -111,8 +113,9 @@ model Team {
   winStatus     Boolean
   averageScore  Float
   members       Member[]
-  matchId  Int
-  match    Match   @relation(fields: [matchId], references: [id])
+  matchId       Int
+  match         Match      @relation(fields: [matchId], references: [id])
+
   @@map("teams")
 }
 
@@ -127,4 +130,24 @@ model Member {
   club          Club       @relation(fields: [clubId], references: [id])
 
   @@map("members")
+}
+
+// 클럽 게시판 모델 추가
+model Post {
+  id         Int       @id @default(autoincrement())
+  date       DateTime  @default(now())
+  title      String
+  content    String
+  authorId   String    // 게시자 ID (UUID 형식의 userId를 참조)
+  clubId     Int       // 클럽 ID
+  type       PostType  // 게시글 타입 (공지사항, 일반게시글)
+  author     User      @relation(fields: [authorId], references: [id])
+  club       Club      @relation(fields: [clubId], references: [id])
+
+  @@map("posts")
+}
+
+enum PostType {
+  NOTICE
+  GENERAL
 }

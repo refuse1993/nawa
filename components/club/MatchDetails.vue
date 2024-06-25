@@ -4,6 +4,10 @@
 			<div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
 		</div>
 		<div v-else>
+			<!-- 클럽에 가입하지 않은 경우 -->
+			<div v-if="!matches.length" class="text-center">
+				<p>가입된 클럽이 없습니다.</p>
+			</div>
 			<!-- 삭제 확인 모달 -->
 			<div
 				v-if="showDeleteModal"
@@ -68,7 +72,7 @@
 								<div v-for="team in match.teams" :key="team.id" class="mb-1">
 									<div
 										:class="[
-											'text-xs mr-2  text-white',
+											'text-xs mr-2 text-white',
 											team.winStatus ? 'bg-[#434d61]' : 'bg-[#ec4624]',
 										]"
 									>
@@ -121,9 +125,15 @@ const fetchMatches = async (userId) => {
 	try {
 		const response = await fetch(`/api/club/getMatches?userId=${userId}`);
 		const data = await response.json();
-		matches.value = data;
+		if (data.error) {
+			console.error('Failed to fetch matches:', data.error);
+			matches.value = [];
+		} else {
+			matches.value = data;
+		}
 	} catch (error) {
 		console.error('Failed to fetch matches:', error);
+		matches.value = [];
 	} finally {
 		isLoading.value = false;
 	}
@@ -214,6 +224,8 @@ const cancelEdit = () => {
 };
 
 const groupedMatches = computed(() => {
+	if (!matches.value.length) return {};
+
 	return matches.value.reduce((groups, match) => {
 		const scheduleId = match.scheduleId || 'No Schedule';
 		const scheduleDate = match.date ? new Date(match.date).toLocaleDateString() : 'No Date';
@@ -234,7 +246,8 @@ const groupedMatches = computed(() => {
 // setup 내에서 즉시 실행 함수로 초기화 작업을 수행합니다.
 (async () => {
 	if (userStore.user) {
-		await fetchMatches(userStore.user.id);
+		const userId = userStore.user.id;
+		await fetchMatches(userId);
 		isLoading.value = false;
 	} else {
 		isLoading.value = false;

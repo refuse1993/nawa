@@ -36,7 +36,6 @@
 
 <script setup>
 import { useUserStore } from '~/stores/user';
-import { computed, ref, onMounted } from 'vue';
 
 const userStore = useUserStore();
 const club = computed(() => userStore.club);

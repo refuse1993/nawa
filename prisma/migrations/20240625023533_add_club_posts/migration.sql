@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "schedules" ALTER COLUMN "creatorId" DROP NOT NULL,
+ALTER COLUMN "creatorId" SET DATA TYPE TEXT;
