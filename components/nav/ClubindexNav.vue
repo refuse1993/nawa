@@ -1,6 +1,8 @@
 <template>
-    <div class="ml-2 mt-1 h-[30px] text-lg font-sans font-semibold flex justify-between items-center">클럽</div>
-    <!-- <div class="flex justify-end items-center bg-white shadow overflow-hidden">
+	<div class="border-b mt-1 h-[35px] text-lg font-sans font-semibold flex justify-between items-center">
+		<div class="ml-2">클럽</div>
+	</div>
+	<!-- <div class="flex justify-end items-center bg-white shadow overflow-hidden">
         <div class="flex justify-end items-end w-1/2 mb-1 mr-2">
             <div
                 class="flex-grow flex justify-center items-center cursor-pointer font-sans ml-2"
