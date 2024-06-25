@@ -1,5 +1,5 @@
 <template>
-	<div class="calendar w-full max-w-md mx-auto bg-white rounded-lg shadow-md p-2">
+	<div class="calendar w-full max-w-md mx-auto bg-white p-2">
 		<div class="flex justify-between items-center mb-2">
 			<button @click="prevMonth" class="text-gray-600 hover:text-gray-800 text-sm">&lt;</button>
 			<h2 class="text-md font-semibold">{{ currentYear }}년 {{ currentMonth + 1 }}월</h2>
@@ -94,6 +94,5 @@ const nextMonth = () => {
 	background: #fff;
 	padding: 0.5rem;
 	border-radius: 0.5rem;
-	box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
 }
 </style>

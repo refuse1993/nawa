@@ -124,7 +124,7 @@ const saveMatches = async () => {
 		if (data.error) {
 			console.error('Error saving matches:', data.error);
 		} else {
-			router.push('/club/schedule');
+			router.push('/schedule');
 		}
 	} catch (error) {
 		console.error('Error saving matches:', error.message);
@@ -132,7 +132,7 @@ const saveMatches = async () => {
 };
 
 const cancel = () => {
-	router.push('/club/schedule');
+	router.push('/schedule');
 };
 
 const fetchParticipants = async () => {
