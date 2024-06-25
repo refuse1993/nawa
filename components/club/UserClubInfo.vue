@@ -26,6 +26,9 @@
 						<p>{{ totalMatches }}</p>
 					</div>
 				</div>
+				<div class="flex text-xs w-[300px] p-2 font-sans">
+					{{ club.description }}
+				</div>
 				<div class="flex overflow-x-auto w-[300px] border-y">
 					<ClubMemberCard
 						v-for="member in clubMembersDetails"
@@ -54,6 +57,7 @@ const loading = ref(true);
 const clubRepresentative = ref('');
 const clubMembers = ref(0);
 const clubMembersDetails = ref([]);
+const clubDescription = ref('');
 const totalMatches = ref(0);
 const winRate = ref(0);
 const logoUrl = ref('');
