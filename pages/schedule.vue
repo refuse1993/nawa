@@ -50,7 +50,7 @@
 							<div class="flex-1">
 								<div class="text-xs font-semibold">{{ formatDateTime(schedule.date) }}</div>
 							</div>
-							<div class="flex-1 text-right mb-1 italic">
+							<div class="flex-1 text-right mb-1 italic font-semibold">
 								<div class="text-sm">{{ schedule.location }}</div>
 							</div>
 							<div class="mb-1 ml-2 items-center justify-center">
@@ -95,18 +95,18 @@
 							<div class="w-1/3 pl-2 mr-1 mb-2 ml-6 flex flex-col justify-center">
 								<button
 									@click="toggleParticipation(schedule.id)"
-									class="mb-0.5 text-xs p-0.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-150 ease-in-out"
+									class="mb-0.5 text-xs p-0.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ec4624] focus:ring-offset-2 transition-all duration-150 ease-in-out"
 									:class="
 										isParticipating(schedule.id)
-											? 'bg-red-600 text-white hover:bg-red-600'
-											: 'bg-blue-500 text-white hover:bg-blue-600'
+											? 'bg-[#ec4624] text-white hover:bg-[#ec4624]'
+											: 'bg-[#434d61] text-white hover:bg-[#434d61]'
 									"
 								>
 									{{ isParticipating(schedule.id) ? '참석 취소' : '참석' }}
 								</button>
 								<button
 									@click="navigateToMatchRegistration(schedule.id)"
-									class="mb-0.5 text-xs p-0.5 rounded-lg bg-green-600 text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-150 ease-in-out"
+									class="mb-0.5 text-xs p-0.5 rounded-lg bg-[#434d61] text-white hover:bg-[#434d61] focus:outline-none focus:ring-2 focus:ring-[#434d61] focus:ring-offset-2 transition-all duration-150 ease-in-out"
 								>
 									경기 결과 등록
 								</button>

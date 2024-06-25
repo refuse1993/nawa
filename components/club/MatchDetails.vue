@@ -69,7 +69,7 @@
 									<div
 										:class="[
 											'text-xs mr-2  text-white',
-											team.winStatus ? 'bg-green-600' : 'bg-red-500',
+											team.winStatus ? 'bg-[#434d61]' : 'bg-[#ec4624]',
 										]"
 									>
 										<div class="text-center text-xs border-b font-semibold">{{ team.score }}</div>
