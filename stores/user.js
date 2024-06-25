@@ -4,8 +4,10 @@ import { ref } from "vue";
 export const useUserStore = defineStore("user", () => {
     const client = useSupabaseClient();
     const user = ref(null);
+    const nawauser = ref(null);
     const club = ref(null);
     const matchesWithSchedules = ref([]);
+    const allSchedules = ref([]);
 
     const setUser = async () => {
         const { data } = await client.auth.getUser();
@@ -13,6 +15,15 @@ export const useUserStore = defineStore("user", () => {
 
         if (user.value) {
             await fetchClub();
+            await fetchNawaUser();
+        }
+    };
+
+    const fetchNawaUser = async () => {
+        if (user.value) {
+            const response = await fetch(`/api/user/getUser?userId=${user.value.id}`);
+            const data = await response.json();
+            nawauser.value = data;
         }
     };
 
@@ -24,6 +35,7 @@ export const useUserStore = defineStore("user", () => {
 
             if (club.value) {
                 await fetchMatchesWithSchedules();
+                await fetchAllSchedule();
             }
         }
     };
@@ -36,12 +48,24 @@ export const useUserStore = defineStore("user", () => {
         }
     };
 
+    const fetchAllSchedule = async () => {
+        if (club.value) {
+            const response = await fetch(`/api/schedule/getAllSchedules?clubId=${club.value.id}`);
+            const data = await response.json();
+            allSchedules.value = data;
+        }
+    };
+
     return {
         user,
+        nawauser,
         club,
         matchesWithSchedules,
+        allSchedules,
         setUser,
+        fetchNawaUser,
         fetchClub,
         fetchMatchesWithSchedules,
+        fetchAllSchedule,
     };
 });
